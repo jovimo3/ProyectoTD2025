@@ -48,15 +48,18 @@ Como las comidas que van por peso como verduras frutas o pescados, se organizan 
 ```{r}
 weight_food <- function(df, end){
             r_remove <- c()
+            
             for (i in c(12:(end - 1))) {
               if (i < nrow(df) && is.na(df$Precio[i]) && 
                   (is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) {
                   df$Precio[i] <- df$Precio[i + 1]
                   df$Importe[i] <- df$Importe[i + 1]
                   df$Peso[i] <- df$Descripcion[i + 1]
+                  # Rows to remove
                   r_remove <- c(r_remove, i+1)
               }
             }
+            # Eliminates rows where wheight was written
             if (length(r_remove)>0){
               df <- df[-r_remove,]
             }
