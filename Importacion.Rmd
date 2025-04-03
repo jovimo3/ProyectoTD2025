@@ -43,6 +43,27 @@ dt <- lapply(pdfs, function(pdf) {unlist(strsplit(pdf, "\n"))})
 
 ### 3.1 Tabla Precios
 
+Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
+
+```{r}
+weight_food <- function(df, end){
+            r_remove <- c()
+            for (i in c(12:(end - 1))) {
+              if (i < nrow(df) && is.na(df$Precio[i]) && 
+                  (is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) {
+                  df$Precio[i] <- df$Precio[i + 1]
+                  df$Importe[i] <- df$Importe[i + 1]
+                  df$Peso[i] <- df$Descripcion[i + 1]
+                  r_remove <- c(r_remove, i+1)
+              }
+            }
+            if (length(r_remove)>0){
+              df <- df[-r_remove,]
+            }
+            return(df)
+          }
+```
+
 Extraemos por completo los datos referentes a los elementos comprados precios y unidades, y se transforma en una tabla esto se realiza para todos los distintos tickets.
 
 ```{r results='hide'}
@@ -58,13 +79,13 @@ endTabl <- lapply(dt, function(x) {
 
 df <- lapply(seq_along(dt), function(i) {
   a <- dt[[i]]  # Extraer el texto del PDF i
-  fin <- endTabl[i] - 1  # Obtener la posición de endTabl para este PDF
+  end <- endTabl[i] - 1  # Obtener la posición de endTabl para este PDF
   
   # Convertir a data.frame solo las líneas relevantes
   df <- as.data.frame(
     # \\s indica cualquier espacio en blanco
     # {2,} indica al menos 2 veces seguidas
-    do.call(rbind, lapply(strsplit(a[12:fin], "\\s{2,}"), function(x) {
+    do.call(rbind, lapply(strsplit(a[12:end], "\\s{2,}"), function(x) {
       length(x) <- 5  # Asegurar que cada fila tenga 5 elementos
       return(x)
     })), 
@@ -73,14 +94,9 @@ df <- lapply(seq_along(dt), function(i) {
   # Column names asignation
   colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
   
-  for (i in c(12:(fin - 1))) {
-    if (i < nrow(df) && is.na(df$Precio[i]) && (is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) {
-      #print(paste("Modificando fila:", i))  # Muestra el índice de la fila que se está modificando
-      df$Precio[i] <- df$Precio[i + 1]
-      df$Importe[i] <- df$Importe[i + 1]
-      df$Peso[i] <- df$Descripcion[i + 1]
-    }
-  }
+  # Clear up food with weigth information
+  df <- weight_food(df, end)
+  
   return(df)
 })
 
