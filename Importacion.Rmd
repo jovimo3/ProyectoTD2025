@@ -58,22 +58,29 @@ endTabl <- lapply(dt, function(x) {
 
 df <- lapply(seq_along(dt), function(i) {
   a <- dt[[i]]  # Extraer el texto del PDF i
-  fin <- endTabl[i]  # Obtener la posición de endTabl para este PDF
+  fin <- endTabl[i] - 1  # Obtener la posición de endTabl para este PDF
   
   # Convertir a data.frame solo las líneas relevantes
   df <- as.data.frame(
     # \\s indica cualquier espacio en blanco
     # {2,} indica al menos 2 veces seguidas
     do.call(rbind, lapply(strsplit(a[12:fin], "\\s{2,}"), function(x) {
-      length(x) <- 4  # Asegurar que cada fila tenga 4 elementos
+      length(x) <- 5  # Asegurar que cada fila tenga 5 elementos
       return(x)
     })), 
     stringsAsFactors = FALSE
   )
-  
   # Column names asignation
-  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe")
+  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
   
+  for (i in c(12:(fin - 1))) {
+    if (i < nrow(df) && is.na(df$Precio[i]) && (is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) {
+      #print(paste("Modificando fila:", i))  # Muestra el índice de la fila que se está modificando
+      df$Precio[i] <- df$Precio[i + 1]
+      df$Importe[i] <- df$Importe[i + 1]
+      df$Peso[i] <- df$Descripcion[i + 1]
+    }
+  }
   return(df)
 })
 
