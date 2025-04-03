@@ -22,7 +22,7 @@ library(ggplot2)
 
 ## 2. Carga Pdfs
 
-You can also embed plots, for example:
+Los tickets que queremos analizar se encuentran en formato .pdf, y se encuentran en la carpeta data, por tanto en este bloque importamos todos los .pdf de la carpeta.
 
 ```{r results='hide'}
 dir <- "data/"
@@ -31,4 +31,20 @@ pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
         lapply(pdf_text)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## 3. Transformación
+
+En este apartado realizamos el tratamiento de los datos para dividirlos y reorganizarlos para posteriormente poder consultarlos de manera más fácil y eficiente.
+
+En este bloque dividimos los tiquets por líneas para poder extraer por partes las zonas de interes.
+
+```{r results='hide'}
+a <- unlist(strsplit(df,"\n")) # Divide text
+#a <- a[nzchar(trimws(a))] # empty lines elimination
+```
+
+### 3.1 Tabla Precios
+
+```{r results='hide'}
+
+```
+
