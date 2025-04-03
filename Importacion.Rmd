@@ -38,13 +38,43 @@ En este apartado realizamos el tratamiento de los datos para dividirlos y reorga
 En este bloque dividimos los tiquets por líneas para poder extraer por partes las zonas de interes.
 
 ```{r results='hide'}
-a <- unlist(strsplit(df,"\n")) # Divide text
-#a <- a[nzchar(trimws(a))] # empty lines elimination
+dt <- lapply(pdfs, function(pdf) {unlist(strsplit(pdf, "\n"))})
 ```
 
 ### 3.1 Tabla Precios
 
+Extraemos por completo los datos referentes a los elementos comprados precios y unidades, y se transforma en una tabla esto se realiza para todos los distintos tickets.
+
 ```{r results='hide'}
 
-```
+# ^ indica inicio cadena
+# \\s indica espacio
+# *$ indica hasta el final
+# Busca a partir de cabecera tabla pagos una línea vacía 
+endTabl <- lapply(dt, function(x) {
+  min(which(grepl("^\\s*$", x[12:length(x)])) +11)
+  }) %>% unlist
 
+
+df <- lapply(seq_along(dt), function(i) {
+  a <- dt[[i]]  # Extraer el texto del PDF i
+  fin <- endTabl[i]  # Obtener la posición de endTabl para este PDF
+  
+  # Convertir a data.frame solo las líneas relevantes
+  df <- as.data.frame(
+    # \\s indica cualquier espacio en blanco
+    # {2,} indica al menos 2 veces seguidas
+    do.call(rbind, lapply(strsplit(a[12:fin], "\\s{2,}"), function(x) {
+      length(x) <- 4  # Asegurar que cada fila tenga 4 elementos
+      return(x)
+    })), 
+    stringsAsFactors = FALSE
+  )
+  
+  # Column names asignation
+  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe")
+  
+  return(df)
+})
+
+```
