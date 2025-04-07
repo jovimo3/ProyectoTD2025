@@ -18,6 +18,7 @@ library(pdftools)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(stringr)
 ```
 
 ## 2. Carga Pdfs
@@ -50,8 +51,9 @@ weight_food <- function(df, end){
             r_remove <- c()
             
             for (i in c(12:(end - 1))) {
-              if (i < nrow(df) && is.na(df$Precio[i]) && 
-                  (is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) {
+              if (i < nrow(df) && is.na(df$Precio[i])) #&& 
+                  #(is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) 
+  {
                   df$Precio[i] <- gsub("[^0-9,]","",df$Precio[i + 1])
                   df$Importe[i] <- gsub("[^0-9,]","",df$Importe[i + 1])
                   df$Peso[i] <- gsub("[^0-9,]","",df$Descripcion[i + 1])
@@ -105,6 +107,39 @@ df <- lapply(seq_along(dt), function(i) {
 
 ```
 
+```{r}
+endTabl <- lapply(dt, function(x) {
+  min(which(grepl("^\\s*$", x[12:length(x)])) +11)
+  }) %>% unlist
+
+
+
+df <- lapply(seq_along(dt), function(i) {
+  a <- dt[[i]]
+  end <- endTabl[i] - 1
+
+  # Procesar línea por línea
+  lines_df <- lapply(a[12:end], function(line) {
+    cantidad <- str_extract(line, "^\\s{0,2}\\d+")
+    precio <- str_extract(line, "\\d+,\\d{2}$")
+    importes <- str_extract(line, "(\\d+,\\d{2})\\s*$")
+    
+    descripcion <- str_trim(
+      str_remove_all(line, "^\\s*\\d+\\s*|\\d+,\\d{2}\\s*$")
+    )
+
+    return(c(cantidad, descripcion, precio, importes, NA))
+  })
+
+  df <- as.data.frame(do.call(rbind, lines_df), stringsAsFactors = FALSE)
+  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
+
+  #df <- weight_food(df, end)
+  return(df)
+})
+
+```
+
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
 
 ```{r results='hide'}
@@ -115,4 +150,47 @@ df <- lapply(df, function(df) {
     # Change "," to "." and change type to numeric
     mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
 }) 
+```
+
+ 
+```{r}
+# List to collect all Price Tables
+l_compras <- list()
+
+# Price Table Extraction
+for (i in pdfs){
+  # We take from Description to TOTAL
+  tabl <- str_extract(i,regex("Descripción(.*?)TOTAL",dotall = TRUE))
+  tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
+  tabl <- tabl[-c(1,length(tabl))] # Extraction head and Total line
+  
+  l_compras[[length(l_compras) + 1]] <- tabl
+}
+
+```
+
+```{r results='hide'}
+
+t_compras <- list()
+
+# Table Transformation
+for(i in l_compras){
+  tabl <- c()
+  for (e in seq_along(i)) {
+    line <- strsplit(i[[e]], "\\s{2,}")[[1]]
+    
+    # Force Table to Have 5 Columns
+    if (length(line) < 5) {
+      line <- c(line, rep(NA, 5 - length(line)))
+    }
+    tabl <- append(tabl, list(line))
+  }
+  df <- do.call(rbind, tabl)
+  df <- as.data.frame(df)
+  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
+  
+  t_compras <- append(t_compras, list(df))
+  
+}
+
 ```
