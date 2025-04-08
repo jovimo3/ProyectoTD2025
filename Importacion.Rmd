@@ -152,7 +152,7 @@ df <- lapply(df, function(df) {
 }) 
 ```
 
- 
+ Extrae tabla (en pruebas)
 ```{r}
 # List to collect all Price Tables
 l_compras <- list()
@@ -169,28 +169,47 @@ for (i in pdfs){
 
 ```
 
-```{r results='hide'}
+Prueba actual
 
+```{r}
 t_compras <- list()
 
-# Table Transformation
-for(i in l_compras){
-  tabl <- c()
-  for (e in seq_along(i)) {
-    line <- strsplit(i[[e]], "\\s{2,}")[[1]]
-    
-    # Force Table to Have 5 Columns
-    if (length(line) < 5) {
-      line <- c(line, rep(NA, 5 - length(line)))
-    }
-    tabl <- append(tabl, list(line))
-  }
-  df <- do.call(rbind, tabl)
-  df <- as.data.frame(df)
-  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
+i <- l_compras[[2]]
+tabl <- list()
+
+for (e in seq_along(i)){
+  line <- i[[e]]
   
-  t_compras <- append(t_compras, list(df))
+  cantidad <- str_extract(line, "^\\s{0,2}\\d+\\s{1,}")%>%str_trim()
+  line <- sub("^\\s{0,2}\\d+\\s{1,}", "", line)%>%str_trim()
+  
+  descripcion <- str_extract(line, "^[^\\s].*?\\s{3,}") %>% str_trim()
+  line <- sub("^[^\\s].*?\\s{3,}", "", line)%>% str_trim()
+  if (is.na(descripcion)){
+    descripcion <- line
+    precio <- NA
+    importe <- NA
+  }else{
+      numeros <- str_split_fixed(line, "\\s{2,}",2)
+      precio <- numeros[1]
+      importe <- numeros[2]
+  }
+  
+  dt1 <- data.frame(Cantidad = cantidad,
+                       Descripcion = descripcion,
+                       Precio = precio,
+                       Importe = importe,
+                       Peso = NA)  # El valor de Peso está vacío por ahora
+    
+  tabl <- append(tabl, list(dt1))
   
 }
 
+df <- do.call(rbind, tabl)
+df <- as.data.frame(df)
+
+# Añadimos el data.frame final a la lista de compras
+t_compras <- append(t_compras, list(df))
+
+t_compras
 ```
