@@ -36,12 +36,6 @@ pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
 
 En este apartado realizamos el tratamiento de los datos para dividirlos y reorganizarlos para posteriormente poder consultarlos de manera más fácil y eficiente.
 
-En este bloque dividimos los tiquets por líneas para poder extraer por partes las zonas de interes.
-
-```{r results='hide'}
-dt <- lapply(pdfs, function(pdf) {unlist(strsplit(pdf, "\n"))})
-```
-
 ### 3.1 Tabla Precios
 
 Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
@@ -70,89 +64,9 @@ weight_food <- function(df, end){
 ```
 
 Extraemos por completo los datos referentes a los elementos comprados precios y unidades, y se transforma en una tabla esto se realiza para todos los distintos tickets.
+Extrae tabla (en pruebas)
 
-```{r results='hide'}
-
-# ^ indica inicio cadena
-# \\s indica espacio
-# *$ indica hasta el final
-# Busca a partir de cabecera tabla pagos una línea vacía 
-endTabl <- lapply(dt, function(x) {
-  min(which(grepl("^\\s*$", x[12:length(x)])) +11)
-  }) %>% unlist
-
-
-df <- lapply(seq_along(dt), function(i) {
-  a <- dt[[i]]  # Extraer el texto del PDF i
-  end <- endTabl[i] - 1  # Obtener la posición de endTabl para este PDF
-  
-  # Convertir a data.frame solo las líneas relevantes
-  df <- as.data.frame(
-    # \\s indica cualquier espacio en blanco
-    # {2,} indica al menos 2 veces seguidas
-    do.call(rbind, lapply(strsplit(a[12:end], "\\s{2,}"), function(x) {
-      length(x) <- 5  # Asegurar que cada fila tenga 5 elementos
-      return(x)
-    })), 
-    stringsAsFactors = FALSE
-  )
-  # Column names asignation
-  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
-  
-  # Clear up food with weigth information
-  df <- weight_food(df, end)
-  
-  return(df)
-})
-
-```
-
-```{r}
-endTabl <- lapply(dt, function(x) {
-  min(which(grepl("^\\s*$", x[12:length(x)])) +11)
-  }) %>% unlist
-
-
-
-df <- lapply(seq_along(dt), function(i) {
-  a <- dt[[i]]
-  end <- endTabl[i] - 1
-
-  # Procesar línea por línea
-  lines_df <- lapply(a[12:end], function(line) {
-    cantidad <- str_extract(line, "^\\s{0,2}\\d+")
-    precio <- str_extract(line, "\\d+,\\d{2}$")
-    importes <- str_extract(line, "(\\d+,\\d{2})\\s*$")
-    
-    descripcion <- str_trim(
-      str_remove_all(line, "^\\s*\\d+\\s*|\\d+,\\d{2}\\s*$")
-    )
-
-    return(c(cantidad, descripcion, precio, importes, NA))
-  })
-
-  df <- as.data.frame(do.call(rbind, lines_df), stringsAsFactors = FALSE)
-  colnames(df) <- c("Cantidad", "Descripcion", "Precio", "Importe", "Peso")
-
-  #df <- weight_food(df, end)
-  return(df)
-})
-
-```
-
-Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
-
-```{r results='hide'}
-df <- lapply(df, function(df) {
-  df %>%
-    # Change <NA> in Importe to Precio
-    mutate(Importe = ifelse(is.na(Importe), Precio, Importe)) %>%
-    # Change "," to "." and change type to numeric
-    mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
-}) 
-```
-
- Extrae tabla (en pruebas)
+Extracción de tabla del pdf.
 ```{r}
 # List to collect all Price Tables
 l_compras <- list()
@@ -169,47 +83,61 @@ for (i in pdfs){
 
 ```
 
-Prueba actual
-
-```{r}
+Transformación datos en tabla
+```{r results='hide'}
 t_compras <- list()
 
 i <- l_compras[[2]]
+
+for(i in l_compras){
 tabl <- list()
 
-for (e in seq_along(i)){
-  line <- i[[e]]
-  
-  cantidad <- str_extract(line, "^\\s{0,2}\\d+\\s{1,}")%>%str_trim()
-  line <- sub("^\\s{0,2}\\d+\\s{1,}", "", line)%>%str_trim()
-  
-  descripcion <- str_extract(line, "^[^\\s].*?\\s{3,}") %>% str_trim()
-  line <- sub("^[^\\s].*?\\s{3,}", "", line)%>% str_trim()
-  if (is.na(descripcion)){
-    descripcion <- line
-    precio <- NA
-    importe <- NA
-  }else{
-      numeros <- str_split_fixed(line, "\\s{2,}",2)
-      precio <- numeros[1]
-      importe <- numeros[2]
-  }
-  
-  dt1 <- data.frame(Cantidad = cantidad,
-                       Descripcion = descripcion,
-                       Precio = precio,
-                       Importe = importe,
-                       Peso = NA)  # El valor de Peso está vacío por ahora
-    
-  tabl <- append(tabl, list(dt1))
-  
-}
+    for (e in seq_along(i)){
+      line <- i[[e]]
+      
+      cantidad <- str_extract(line, "^\\s{0,2}\\d+\\s{1,}")%>%str_trim()
+      line <- sub("^\\s{0,2}\\d+\\s{1,}", "", line)%>%str_trim()
+      
+      descripcion <- str_extract(line, "^[^\\s].*?\\s{3,}") %>% str_trim()
+      line <- sub("^[^\\s].*?\\s{3,}", "", line)%>% str_trim()
+      if (is.na(descripcion)){
+        descripcion <- line
+        precio <- NA
+        importe <- NA
+      }else{
+          numeros <- str_split_fixed(line, "\\s{2,}",2)
+          precio <- numeros[1]
+          importe <- numeros[2]
+      }
+      
+      dt1 <- data.frame(Cantidad = cantidad,
+                           Descripcion = descripcion,
+                           Precio = precio,
+                           Importe = importe,
+                           Peso = NA)  # El valor de Peso está vacío por ahora
+        
+      tabl <- append(tabl, list(dt1))
+      
+    }
 
 df <- do.call(rbind, tabl)
 df <- as.data.frame(df)
 
 # Añadimos el data.frame final a la lista de compras
 t_compras <- append(t_compras, list(df))
-
-t_compras
+}
 ```
+
+Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
+
+```{r results='hide'}
+df <- lapply(df, function(df) {
+  df %>%
+    # Change <NA> in Importe to Precio
+    mutate(Importe = ifelse(is.na(Importe), Precio, Importe)) %>%
+    # Change "," to "." and change type to numeric
+    mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
+}) 
+```
+
+ 
