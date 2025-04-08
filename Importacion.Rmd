@@ -63,10 +63,10 @@ weight_food <- function(df, end){
           }
 ```
 
-Extraemos por completo los datos referentes a los elementos comprados precios y unidades, y se transforma en una tabla esto se realiza para todos los distintos tickets.
-Extrae tabla (en pruebas)
+Extraemos por completo los datos referentes a los elementos comprados precios y unidades, y se transforma en una tabla esto se realiza para todos los distintos tickets. Extrae tabla (en pruebas)
 
 Extracción de tabla del pdf.
+
 ```{r}
 # List to collect all Price Tables
 l_compras <- list()
@@ -84,6 +84,7 @@ for (i in pdfs){
 ```
 
 Transformación datos en tabla
+
 ```{r results='hide'}
 t_compras <- list()
 
@@ -130,14 +131,12 @@ t_compras <- append(t_compras, list(df))
 
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
 
+
 ```{r results='hide'}
-df <- lapply(df, function(df) {
-  df %>%
-    # Change <NA> in Importe to Precio
-    mutate(Importe = ifelse(is.na(Importe), Precio, Importe)) %>%
+for (i in seq_along(t_compras)){
+   t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
+    mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
     # Change "," to "." and change type to numeric
     mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
-}) 
+}
 ```
-
- 
