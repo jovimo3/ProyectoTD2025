@@ -85,6 +85,9 @@ for (i in pdfs){
   tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
   tabl <- tabl[-c(1,length(tabl))] # Extraction head and Total line
   
+  if (str_detect(i,"ENTRADA")){
+    tabl <- tabl[-c(length(tabl),length(tabl) - 1)]
+  }
   l_compras[[length(l_compras) + 1]] <- tabl
 }
 
