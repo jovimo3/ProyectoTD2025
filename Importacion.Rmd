@@ -89,10 +89,10 @@ Transformación datos en tabla
 t_compras <- list()
 
 i <- l_compras[[2]]
-
+a <- 0
 for(i in l_compras){
   tabl <- list()
-
+  a <- a + 1
     for (e in seq_along(i)){
         line <- i[[e]]
         
@@ -111,11 +111,12 @@ for(i in l_compras){
             importe <- numeros[2]
         }
         
-        dt1 <- data.frame(Cantidad = cantidad,
-                             Descripcion = descripcion,
-                             Precio = precio,
-                             Importe = importe,
-                             Peso = NA)  # El valor de Peso está vacío por ahora
+        dt1 <- data.frame(index = a,
+                          Cantidad = cantidad,
+                          Descripcion = descripcion,
+                          Precio = precio,
+                          Importe = importe,
+                          Peso = NA)  # El valor de Peso está vacío por ahora
           
         tabl <- append(tabl, list(dt1))
     }
