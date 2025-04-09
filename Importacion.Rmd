@@ -47,7 +47,7 @@ weight_food <- function(df){
             for (i in c(1:nrow(df))) {
               if (i < nrow(df) && is.na(df$Precio[i])) #&& 
                   #(is.na(df$Cantidad[i + 1]) || df$Cantidad[i + 1] == "")) 
-  {
+            {
                   df$Precio[i] <- gsub("[^0-9,]","",df$Precio[i + 1])
                   df$Importe[i] <- gsub("[^0-9,]","",df$Importe[i + 1])
                   df$Peso[i] <- gsub("[^0-9,]","",df$Descripcion[i + 1])
@@ -132,12 +132,62 @@ for(i in l_compras){
 
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
 
-
 ```{r results='hide'}
 for (i in seq_along(t_compras)){
    t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
     mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
     # Change "," to "." and change type to numeric
     mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
+}
+```
+
+### 3.2 Datos Generales
+
+Aqui vamos a tratar de recoger y colocar en una tabla la información general de los tiquets como dirección, teléfono... entre otros.
+
+Extracción bloque cabecera:
+
+```{r}
+# List to collect all ticket head elements
+l_head <- list()
+
+# Price Table Extraction
+for (i in pdfs){
+  # We take from MERCADONA to the start of the price table (Descripción)
+  tabl <- str_extract(i,regex("MERCADONA(.*?)Descripción",dotall = TRUE))
+  tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
+  tabl <- tabl[-c(1,length(tabl))] # Extraction Mecadona line and table start line
+  
+  l_head[[length(l_head) + 1]] <- tabl
+}
+
+```
+
+En este bloque organizamos toda la información de la cabecera de los tiquets en un unico dataframe
+
+```{r}
+df_h <- data.frame(Direccion = character(),
+                   Ciudad = character(),
+                   CP = character(),
+                   Telefono = character(),
+                   Fecha = character(),
+                   Hora = character(),
+                   OP = character(),
+                   Num_Fac_Simp = character(),
+                   stringsAsFactors = FALSE
+                   )
+
+for (i in l_head){
+  df_h <- rbind(df_h, data.frame(
+    Direccion = i[[1]]%>% str_trim(),
+    Ciudad = i[[2]] %>% sub("\\d+", "", .)%>%str_trim(),
+    CP =i[[2]] %>% str_extract("\\d+")%>%str_trim(),
+    Telefono = i[[3]] %>% sub("TELÉFONO:", "",.)%>%str_trim,
+    Fecha = i[[4]] %>% str_extract("\\b\\d{2}/\\d{2}/\\d{4}\\b")
+                   %>% as.Date(format = "%d/%m/%Y"),
+    Hora = i[[4]] %>% str_extract("\\d{2}[:]\\d{2}")%>% str_trim(),
+    OP = i[[4]] %>% str_extract("OP: \\d+") %>% sub("OP: ","",.)%>% str_trim(),
+    Num_Fac_Simp = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>% str_trim()
+  ))
 }
 ```
