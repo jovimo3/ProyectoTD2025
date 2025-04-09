@@ -142,6 +142,21 @@ for (i in seq_along(t_compras)){
 }
 ```
 
+Ahora para una consulta más fácil, unimos todos los tíquets en una misma tabla y usamos la columna index para poder diferenciarlos entre ellos con mayor facilidad.
+
+```{r}
+df_p <- data.frame(index = character(),
+                   Cantidad = character(),
+                   Descripcion = character(),
+                   Precio = character(),
+                   Importe = character(),
+                   Peso = character())
+
+for (i in  t_compras){
+  df_p <- rbind(df_p,i)
+}
+```
+
 ### 3.2 Datos Generales
 
 Aqui vamos a tratar de recoger y colocar en una tabla la información general de los tiquets como dirección, teléfono... entre otros.
