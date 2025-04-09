@@ -40,13 +40,13 @@ En este apartado realizamos el tratamiento de los datos para dividirlos y reorga
 
 Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
 
-
 ```{r}
 weight_food <- function(df){
       r_remove <- c()
       
       for (i in c(1:nrow(df))) {
         if (df$Descripcion[i] == "PESCADO"){
+            df$Cantidad[i +1] <- 1 # Not specify in ticket, by default will be 1
             df$Tipo[i+1] <- "Pescado"
             df$Precio[i+1] <- gsub("[^0-9,]","",df$Precio[i + 2])
             df$Importe[i+1] <- gsub("[^0-9,]","",df$Importe[i + 2])
@@ -158,7 +158,7 @@ for (i in seq_along(t_compras)){
    t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
     mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
     # Change "," to "." and change type to numeric
-    mutate(across(-Descripcion, ~ as.numeric(gsub(",", ".", .))))
+    mutate(across(-c(Descripcion, Tipo, index), ~ as.numeric(gsub(",", ".", .))))
 }
 ```
 
@@ -170,7 +170,8 @@ df_p <- data.frame(index = character(),
                    Descripcion = character(),
                    Precio = character(),
                    Importe = character(),
-                   Peso = character())
+                   Peso = character(),
+                   Tipo = character())
 
 for (i in  t_compras){
   df_p <- rbind(df_p,i)
