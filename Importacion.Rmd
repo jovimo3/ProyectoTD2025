@@ -112,15 +112,13 @@ for(i in l_compras){
         # Next Line Elemts With Weight description is na 
         #with that character search
         if (is.na(descripcion)){
+            descripcion <- line
+            precio <- NA
+            importe <- NA
+            
             if (line == "PESCADO"){
-                descripcion <- line
-                precio <- NA
-                importe <- NA
                 tipo <- "Pescado"
             }else{
-                descripcion <- line
-                precio <- NA
-                importe <- NA
                 tipo <- "Fruta o Verdura"
             }
         }else{
