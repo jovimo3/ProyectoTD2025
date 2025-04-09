@@ -166,7 +166,8 @@ for (i in pdfs){
 En este bloque organizamos toda la información de la cabecera de los tiquets en un unico dataframe
 
 ```{r}
-df_h <- data.frame(Direccion = character(),
+df_h <- data.frame(index = numeric(0),
+                   Direccion = character(),
                    Ciudad = character(),
                    CP = character(),
                    Telefono = character(),
@@ -176,9 +177,11 @@ df_h <- data.frame(Direccion = character(),
                    Num_Fac_Simp = character(),
                    stringsAsFactors = FALSE
                    )
-
+a <- 0
 for (i in l_head){
-  df_h <- rbind(df_h, data.frame(
+    a <- a+1
+    df_h <- rbind(df_h, data.frame(
+    index = a,
     Direccion = i[[1]]%>% str_trim(),
     Ciudad = i[[2]] %>% sub("\\d+", "", .)%>%str_trim(),
     CP =i[[2]] %>% str_extract("\\d+")%>%str_trim(),
