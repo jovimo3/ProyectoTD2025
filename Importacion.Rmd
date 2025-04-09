@@ -89,10 +89,10 @@ Transformación datos en tabla
 t_compras <- list()
 
 i <- l_compras[[2]]
-a <- 0
+a <- 0 # ticket index counter
 for(i in l_compras){
   tabl <- list()
-  a <- a + 1
+  a <- a + 1 # ticket index increment
     for (e in seq_along(i)){
         line <- i[[e]]
         
@@ -111,7 +111,7 @@ for(i in l_compras){
             importe <- numeros[2]
         }
         
-        dt1 <- data.frame(index = a,
+        dt1 <- data.frame(index = a, #Ticket index
                           Cantidad = cantidad,
                           Descripcion = descripcion,
                           Precio = precio,
