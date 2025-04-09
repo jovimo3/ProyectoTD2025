@@ -191,3 +191,14 @@ for (i in l_head){
   ))
 }
 ```
+
+Con este bloque extraemos de cada pdf el precio total pagado en euros y lo añadimos al dataframe anterior de datos generales.
+
+```{r}
+for (i in pdfs){
+   TOTAL_PAGO <- i %>% str_extract("TOTAL \\(€\\)\\s*(\\d+[.,]\\d{2})") %>% sub("TOTAL \\(€\\)\\s*","",.)%>% sub(",",".",.) %>% as.numeric() #%>% print()
+  
+}
+
+df_h <- cbind(df_h,TOTAL_PAGO)
+```
