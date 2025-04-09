@@ -237,13 +237,27 @@ Con este bloque extraemos de cada pdf el precio total pagado en euros y lo añad
 
 ```{r}
 TOTAL_PAGO <- c()
+PARKING_ENTRADA <- c() # Parking Entrance
+PARKING_SALIDA <- c() # Parking Exit
 
 for (i in pdfs){
    TP <- i %>% str_extract("TOTAL \\(€\\)\\s*(\\d+[.,]\\d{2})") %>% 
                  sub("TOTAL \\(€\\)\\s*","",.)%>% sub(",",".",.) %>% as.numeric()
    
+   PE <- i %>% str_extract("ENTRADA \\d{2}[:]\\d{2}") %>% 
+               sub("ENTRADA","",.) %>%
+               str_trim() %>%
+               ifelse(is.na(.), "00:00", .)
+   
+   PS <- i %>% str_extract("SALIDA \\d{2}[:]\\d{2}") %>% 
+               sub("SALIDA","",.) %>%
+               str_trim() %>%
+               ifelse(is.na(.), "00:00", .)
+   
    TOTAL_PAGO <- rbind(TOTAL_PAGO,TP)
+   PARKING_ENTRADA <- rbind(PARKING_ENTRADA,PE)
+   PARKING_SALIDA  <- rbind(PARKING_SALIDA , PS)
 }
 
-df_h <- cbind(df_h,TOTAL_PAGO)
+df_h <- cbind(df_h,TOTAL_PAGO,PARKING_ENTRADA,PARKING_SALIDA )
 ```
