@@ -204,7 +204,7 @@ for (i in pdfs){
 En este bloque organizamos toda la información de la cabecera de los tiquets en un unico dataframe
 
 ```{r}
-df_h <- data.frame(index = numeric(0),
+df_h <- data.frame(index = numeric(),
                    Direccion = character(),
                    Ciudad = character(),
                    CP = character(),
@@ -237,18 +237,20 @@ Con este bloque extraemos de cada pdf el precio total pagado en euros y lo añad
 
 ```{r}
 TOTAL_PAGO <- c()
-PARKING_ENTRADA <- c() # Parking Entrance
-PARKING_SALIDA <- c() # Parking Exit
+PARKING_ENTRADA <- c() 
+PARKING_SALIDA <- c() 
 
 for (i in pdfs){
    TP <- i %>% str_extract("TOTAL \\(€\\)\\s*(\\d+[.,]\\d{2})") %>% 
                  sub("TOTAL \\(€\\)\\s*","",.)%>% sub(",",".",.) %>% as.numeric()
    
+   # Parking Entrance
    PE <- i %>% str_extract("ENTRADA \\d{2}[:]\\d{2}") %>% 
                sub("ENTRADA","",.) %>%
                str_trim() %>%
                ifelse(is.na(.), "00:00", .)
    
+   # Parking Exit
    PS <- i %>% str_extract("SALIDA \\d{2}[:]\\d{2}") %>% 
                sub("SALIDA","",.) %>%
                str_trim() %>%
