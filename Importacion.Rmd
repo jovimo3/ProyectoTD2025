@@ -219,6 +219,11 @@ df_h <- data.frame(index = numeric(),
                    Num_Fac_Simp = character(),
                    stringsAsFactors = FALSE
                    )
+
+
+# Filtramos l_head para que contenga solo las listas con más de 5 elementos (tenga el formato correcto de un ticket)
+l_head <- l_head[sapply(l_head, length) > 5]
+
 a <- 0
 for (i in l_head){
     a <- a+1
