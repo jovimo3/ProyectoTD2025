@@ -36,6 +36,19 @@ pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
 
 En este apartado realizamos el tratamiento de los datos para dividirlos y reorganizarlos para posteriormente poder consultarlos de manera más fácil y eficiente.
 
+## 3.0 Asegurar Tickets de Mercadona
+
+Como hemos observado, en la carpeta data se incluyen tickets que no son de Mercadona o directamente no son tickets por lo que antes de proceder con el transformado, vamos a eliminar estos tickets erróneos.
+
+```{r}
+# Filtramos solo los que contienen "MERCADONA"
+pdfs <- pdfs[sapply(pdfs, function(x) any(grepl("MERCADONA,", x)))]
+
+# Cabe recalcar que filtramos por "MERCADONA," con una coma ya que hemos encontrado dos tickets con formatos extraños
+# Pero que si pertenecían a Mercadona, debían tener un fallo en la codificación
+```
+
+
 ### 3.1 Tabla Precios
 
 Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
@@ -156,9 +169,6 @@ for(i in l_compras){
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
 
 ```{r results='hide'}
-# Filtrar t_compras para mantener solo los dataframes con 7 columnas (tickets con un formato correcto)
-t_compras <- t_compras[sapply(t_compras, function(df) ncol(df) == 7)]
-
 for (i in seq_along(t_compras)){
    t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
     mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
@@ -219,10 +229,6 @@ df_h <- data.frame(index = numeric(),
                    Num_Fac_Simp = character(),
                    stringsAsFactors = FALSE
                    )
-
-
-# Filtramos l_head para que contenga solo las listas con más de 5 elementos (tenga el formato correcto de un ticket)
-l_head <- l_head[sapply(l_head, length) > 5]
 
 a <- 0
 for (i in l_head){
