@@ -36,6 +36,19 @@ pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
 
 En este apartado realizamos el tratamiento de los datos para dividirlos y reorganizarlos para posteriormente poder consultarlos de manera más fácil y eficiente.
 
+## 3.0 Asegurar Tickets de Mercadona
+
+Como hemos observado, en la carpeta data se incluyen tickets que no son de Mercadona o directamente no son tickets por lo que antes de proceder con el transformado, vamos a eliminar estos tickets erróneos.
+
+```{r}
+# Filtramos solo los que contienen "MERCADONA"
+pdfs <- pdfs[sapply(pdfs, function(x) any(grepl("MERCADONA,", x)))]
+
+# Cabe recalcar que filtramos por "MERCADONA," con una coma ya que hemos encontrado dos tickets con formatos extraños
+# Pero que si pertenecían a Mercadona, debían tener un fallo en la codificación
+```
+
+
 ### 3.1 Tabla Precios
 
 Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
@@ -45,7 +58,7 @@ weight_food <- function(df){
       r_remove <- c()
       
       for (i in c(1:nrow(df))) {
-        if (df$Descripcion[i] == "PESCADO"){
+        if (df$Descripcion[i] == "PESCADO" && i + 2 <= nrow(df)){
             df$Cantidad[i +1] <- 1 # Not specify in ticket, by default will be 1
             df$Tipo[i+1] <- "Pescado"
             df$Precio[i+1] <- gsub("[^0-9,]","",df$Precio[i + 2])
@@ -85,7 +98,7 @@ for (i in pdfs){
   tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
   tabl <- tabl[-c(1,length(tabl))] # Extraction head and Total line
   
-  if (str_detect(i,"ENTRADA")){
+  if (any(str_detect(i,"ENTRADA"))){
     tabl <- tabl[-c(length(tabl),length(tabl) - 1)]
   }
   l_compras[[length(l_compras) + 1]] <- tabl
@@ -119,7 +132,7 @@ for(i in l_compras){
             precio <- NA
             importe <- NA
             
-            if (line == "PESCADO"){
+            if (!is.na(line) && line == "PESCADO"){
                 tipo <- "Pescado"
             }else{
                 tipo <- "Fruta o Verdura"
@@ -150,6 +163,7 @@ for(i in l_compras){
   # Añadimos el data.frame final a la lista de compras
   t_compras <- append(t_compras, list(df))
 }
+
 ```
 
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
@@ -215,6 +229,7 @@ df_h <- data.frame(index = numeric(),
                    Num_Fac_Simp = character(),
                    stringsAsFactors = FALSE
                    )
+
 a <- 0
 for (i in l_head){
     a <- a+1
