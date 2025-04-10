@@ -45,7 +45,7 @@ weight_food <- function(df){
       r_remove <- c()
       
       for (i in c(1:nrow(df))) {
-        if (df$Descripcion[i] == "PESCADO"){
+        if (df$Descripcion[i] == "PESCADO" && i + 2 <= nrow(df)){
             df$Cantidad[i +1] <- 1 # Not specify in ticket, by default will be 1
             df$Tipo[i+1] <- "Pescado"
             df$Precio[i+1] <- gsub("[^0-9,]","",df$Precio[i + 2])
@@ -85,7 +85,7 @@ for (i in pdfs){
   tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
   tabl <- tabl[-c(1,length(tabl))] # Extraction head and Total line
   
-  if (str_detect(i,"ENTRADA")){
+  if (any(str_detect(i,"ENTRADA"))){
     tabl <- tabl[-c(length(tabl),length(tabl) - 1)]
   }
   l_compras[[length(l_compras) + 1]] <- tabl
@@ -119,7 +119,7 @@ for(i in l_compras){
             precio <- NA
             importe <- NA
             
-            if (line == "PESCADO"){
+            if (!is.na(line) && line == "PESCADO"){
                 tipo <- "Pescado"
             }else{
                 tipo <- "Fruta o Verdura"
@@ -150,11 +150,15 @@ for(i in l_compras){
   # Añadimos el data.frame final a la lista de compras
   t_compras <- append(t_compras, list(df))
 }
+
 ```
 
 Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
 
 ```{r results='hide'}
+# Filtrar t_compras para mantener solo los dataframes con 7 columnas (tickets con un formato correcto)
+t_compras <- t_compras[sapply(t_compras, function(df) ncol(df) == 7)]
+
 for (i in seq_along(t_compras)){
    t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
     mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
