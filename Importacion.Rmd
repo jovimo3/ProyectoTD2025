@@ -241,6 +241,7 @@ PARKING_ENTRADA <- c()
 PARKING_SALIDA <- c() 
 
 for (i in pdfs){
+   # Total Payment End Table 
    TP <- i %>% str_extract("TOTAL \\(€\\)\\s*(\\d+[.,]\\d{2})") %>% 
                  sub("TOTAL \\(€\\)\\s*","",.)%>% sub(",",".",.) %>% as.numeric()
    
