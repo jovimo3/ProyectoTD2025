@@ -232,7 +232,9 @@ df_h <- data.frame(index = numeric(),
                    Fecha = character(),
                    Hora = character(),
                    OP = character(),
-                   Num_Fac_Simp = character(),
+                   Num_Tienda = character(),
+                   Num_Caja = character(),
+                   Num_ticket = character(),
                    stringsAsFactors = FALSE
                    )
 
@@ -249,7 +251,15 @@ for (i in l_head){
                    %>% as.Date(format = "%d/%m/%Y"),
     Hora = i[[4]] %>% str_extract("\\d{2}[:]\\d{2}")%>% str_trim(),
     OP = i[[4]] %>% str_extract("OP: \\d+") %>% sub("OP: ","",.)%>% str_trim(),
-    Num_Fac_Simp = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>% str_trim()
+    Num_Tienda = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>% 
+                            str_trim() %>%
+                            str_split("-",simplify = TRUE)%>% .[,1],
+    Num_Caja = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>%
+                          str_trim() %>%
+                          str_split("-",simplify = TRUE)%>% .[,2],
+    Num_ticket = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>%
+                          str_trim() %>%
+                          str_split("-",simplify = TRUE)%>% .[,3]
   ))
 }
 ```
