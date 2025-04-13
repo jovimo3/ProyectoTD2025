@@ -2,7 +2,10 @@
 title: "Importacion"
 author: "Josep Vicent MORALES"
 date: "2025-04-03"
-output: pdf_document
+output:
+  bookdown::pdf_document2: default
+  bookdown::html_document2:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1.Librerias
 
-Conjunto de librerías a utilizar
+Conjunto de librerías a utilizar:
 
 ```{r results='hide'}
 library(pdftools)
@@ -47,6 +50,12 @@ pdfs <- pdfs[sapply(pdfs, function(x) any(grepl("MERCADONA,", x)))]
 ```
 
 ### 3.1 Tabla Precios
+
+```{r echo=FALSE, out.width="70%", fig.align="center", fig.cap="Figura 1: Vista de productos"}
+knitr::include_graphics("img/productos.png")
+```
+
+En la Figura se puede apreciar qué estructura sigue la tabla de manera genérica.
 
 Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
 
@@ -275,4 +284,52 @@ for (i in pdfs){
 }
 
 df_h <- cbind(df_h,TOTAL_PAGO,PARKING_ENTRADA,PARKING_SALIDA )
+```
+
+### 3.3 Tabla IVA
+
+En este punto extraemos las tablas de los distintos IVA aplicados en los tiquet.
+
+Con este bloque extraemos como bloque la tabla entera desde el ticket colocandolas en una lista que referencia el tiquet.
+
+```{r}
+l_iva <- list()
+
+# Price Table Extraction
+for (i in pdfs){
+  # We take from IVA to TOTAL
+  tabl <- str_extract(i,regex("TARJETA BANCARIA\\s{3,}(.*?)TOTAL",dotall = TRUE))
+  tabl <- unlist(strsplit(tabl, "\n")) %>% str_trim() # Division by lines
+  tabl <- tabl[-c(1,2,3,length(tabl))] # Extraction head and Total 
+  tabl <- tabl %>% sub(",",".",.) # change "," to "." for converting to number type
+  tabl <- tabl %>% sub("%", "",.) # eliminates "%" for converting to number type
+  
+  l_iva[[length(l_iva) + 1]] <- tabl
+}
+
+```
+
+En este bloque, colocamos todas las tablas en un unico data frame con una variable de índice para poder saber a que tiquet hacen referencia y enlazandolos con los otros data frames que hemos creado anteriormente.
+
+```{r}
+df_iva <- data.frame(index = numeric(),
+                   IVA = character(),
+                   BASE = character(),
+                   CUOTA = character(),
+                   stringsAsFactors = FALSE
+                   )
+
+a <- 0
+for (i in l_iva){
+  a <- a +1
+  for (e in i){
+    iva <- e %>% str_split("\\s{1,}",simplify = TRUE)
+    df_iva <- rbind(df_iva,data.frame(
+                         index = a,
+                         IVA = iva[1],
+                         BASE = iva[2],
+                         CUOTA = iva[3]
+  ))
+  }
+}
 ```
