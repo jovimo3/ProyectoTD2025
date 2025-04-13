@@ -36,7 +36,6 @@ pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
 
 En este apartado realizamos el tratamiento de los datos para dividirlos y reorganizarlos para posteriormente poder consultarlos de manera más fácil y eficiente.
 
-
 Como hemos observado, en la carpeta data se incluyen tickets que no son de Mercadona o directamente no son tickets por lo que antes de proceder con el transformado, vamos a eliminar estos tickets erróneos.
 
 ```{r}
