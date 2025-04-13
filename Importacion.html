@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Josep Vicent MORALES" />
+<meta name="author" content />
 
 <meta name="date" content="2025-04-03" />
 
@@ -1609,7 +1609,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">Importacion</h1>
-<h4 class="author">Josep Vicent MORALES</h4>
+<h4 class="author"></h4>
 <h4 class="date">2025-04-03</h4>
 
 </div>
@@ -1617,7 +1617,7 @@ display: none;
 
 <div id="librerias" class="section level2" number="1">
 <h2><span class="header-section-number">1</span> 1.Librerias</h2>
-<p>Conjunto de librerías a utilizar</p>
+<p>Conjunto de librerías a utilizar:</p>
 <pre class="r"><code>library(pdftools)</code></pre>
 <pre><code>## Warning: package &#39;pdftools&#39; was built under R version 4.4.2</code></pre>
 <pre><code>## Using poppler version 23.08.0</code></pre>
@@ -1660,7 +1660,7 @@ pdfs &lt;- pdfs[sapply(pdfs, function(x) any(grepl(&quot;MERCADONA,&quot;, x)))]
 Figure 1: Figura 1: Vista de productos
 </p>
 </div>
-<p>En la Figura <code>\@ref(fig:productos)</code>, se puede apreciar qué estructura sigue la tabla de manera genérica.</p>
+<p>En la Figura se puede apreciar qué estructura sigue la tabla de manera genérica.</p>
 <p>Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.</p>
 <pre class="r"><code>weight_food &lt;- function(df){
       r_remove &lt;- c()
@@ -1806,7 +1806,9 @@ for (i in pdfs){
                    Fecha = character(),
                    Hora = character(),
                    OP = character(),
-                   Num_Fac_Simp = character(),
+                   Num_Tienda = character(),
+                   Num_Caja = character(),
+                   Num_ticket = character(),
                    stringsAsFactors = FALSE
                    )
 
@@ -1823,7 +1825,15 @@ for (i in l_head){
                    %&gt;% as.Date(format = &quot;%d/%m/%Y&quot;),
     Hora = i[[4]] %&gt;% str_extract(&quot;\\d{2}[:]\\d{2}&quot;)%&gt;% str_trim(),
     OP = i[[4]] %&gt;% str_extract(&quot;OP: \\d+&quot;) %&gt;% sub(&quot;OP: &quot;,&quot;&quot;,.)%&gt;% str_trim(),
-    Num_Fac_Simp = i[[5]] %&gt;% sub(&quot;FACTURA SIMPLIFICADA: &quot;,&quot;&quot;,.) %&gt;% str_trim()
+    Num_Tienda = i[[5]] %&gt;% sub(&quot;FACTURA SIMPLIFICADA: &quot;,&quot;&quot;,.) %&gt;% 
+                            str_trim() %&gt;%
+                            str_split(&quot;-&quot;,simplify = TRUE)%&gt;% .[,1],
+    Num_Caja = i[[5]] %&gt;% sub(&quot;FACTURA SIMPLIFICADA: &quot;,&quot;&quot;,.) %&gt;%
+                          str_trim() %&gt;%
+                          str_split(&quot;-&quot;,simplify = TRUE)%&gt;% .[,2],
+    Num_ticket = i[[5]] %&gt;% sub(&quot;FACTURA SIMPLIFICADA: &quot;,&quot;&quot;,.) %&gt;%
+                          str_trim() %&gt;%
+                          str_split(&quot;-&quot;,simplify = TRUE)%&gt;% .[,3]
   ))
 }</code></pre>
 <p>Con este bloque extraemos de cada pdf el precio total pagado en euros y lo añadimos al dataframe anterior de datos generales.</p>
@@ -1894,6 +1904,33 @@ for (i in l_iva){
   }
 }</code></pre>
 </div>
+</div>
+<div id="preguntas" class="section level2" number="4">
+<h2><span class="header-section-number">4</span> 4 PREGUNTAS</h2>
+<p>En la siguietne parte vamos a resolver las siguientes preguntas propuestas por el profesor:</p>
+<ul>
+<li><p>¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?</p></li>
+<li><p>¿Cuántas unidades de cada uno se han vendido ?</p></li>
+<li><p>Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?</p></li>
+<li><p>Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?</p></li>
+<li><p>Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.</p></li>
+<li><p>¿ Cuál es la procedencia de los tickets ?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ?</p></li>
+<li><p>Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?</p></li>
+</ul>
+<p>Tabien se responderan a las siguietnes preguntas propuestas por nuestro equipo:</p>
+<ul>
+<li><p>¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana?</p></li>
+<li><p>¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?</p></li>
+<li><p>¿El precio total de la compra varían según la ciudad o zona?</p></li>
+<li><p>¿Cuánto dinero de media se gasta cada cliente en una compra?</p></li>
+<li><p>¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?</p></li>
+<li><p>¿Qué productos suelen comprarse juntos?</p></li>
+<li><p>¿Cuál es el producto más caro registrado en los tickets?</p></li>
+<li><p>¿Hay una cantidad media de productos por tickets?</p></li>
+<li><p>¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?</p></li>
+<li><p>¿Cuánto supone económicamente de media el IVA en las compras</p></li>
+<li><p>¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?</p></li>
+</ul>
 </div>
 
 

@@ -241,23 +241,29 @@ df_h <- data.frame(index = numeric(),
 a <- 0
 for (i in l_head){
     a <- a+1
+    if ( i[[1]] == "                 A-46103834"){
+      b <- i[-1]
+    }else{
+      b <- i
+    }
+    
     df_h <- rbind(df_h, data.frame(
     index = a,
-    Direccion = i[[1]]%>% str_trim(),
-    Ciudad = i[[2]] %>% sub("\\d+", "", .)%>%str_trim(),
-    CP =i[[2]] %>% str_extract("\\d+")%>%str_trim(),
-    Telefono = i[[3]] %>% sub("TELÉFONO:", "",.)%>%str_trim,
-    Fecha = i[[4]] %>% str_extract("\\b\\d{2}/\\d{2}/\\d{4}\\b")
+    Direccion = b[[1]]%>% str_trim(),
+    Ciudad = b[[2]] %>% sub("\\d+", "", .)%>%str_trim(),
+    CP =b[[2]] %>% str_extract("\\d+")%>%str_trim(),
+    Telefono = b[[3]] %>% sub("TELÉFONO:", "",.)%>%str_trim,
+    Fecha = b[[4]] %>% str_extract("\\b\\d{2}/\\d{2}/\\d{4}\\b")
                    %>% as.Date(format = "%d/%m/%Y"),
-    Hora = i[[4]] %>% str_extract("\\d{2}[:]\\d{2}")%>% str_trim(),
-    OP = i[[4]] %>% str_extract("OP: \\d+") %>% sub("OP: ","",.)%>% str_trim(),
-    Num_Tienda = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>% 
+    Hora = b[[4]] %>% str_extract("\\d{2}[:]\\d{2}")%>% str_trim(),
+    OP = b[[4]] %>% str_extract("OP: \\d+") %>% sub("OP: ","",.)%>% str_trim(),
+    Num_Tienda = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>% 
                             str_trim() %>%
                             str_split("-",simplify = TRUE)%>% .[,1],
-    Num_Caja = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>%
+    Num_Caja = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>%
                           str_trim() %>%
                           str_split("-",simplify = TRUE)%>% .[,2],
-    Num_ticket = i[[5]] %>% sub("FACTURA SIMPLIFICADA: ","",.) %>%
+    Num_ticket = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>%
                           str_trim() %>%
                           str_split("-",simplify = TRUE)%>% .[,3]
   ))
