@@ -1,6 +1,6 @@
 ---
 title: "Importacion"
-author: ""
+author: "Morales Martorell, Josep Vicent"
 date: "2025-04-03"
 output:
   bookdown::pdf_document2: default
@@ -402,5 +402,4 @@ Tabien se responderan a las siguietnes preguntas propuestas por nuestro equipo:
 
 -   ¿Hay una relación entre lo que se compra y si ha utilizado el parking o no?
 
--   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking? 
-
+-   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?
