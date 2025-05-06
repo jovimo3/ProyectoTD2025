@@ -57,7 +57,7 @@ knitr::include_graphics("img/productos.png")
 
 En la Figura se puede apreciar qué estructura sigue la tabla de manera genérica.
 
-Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrandose en una líena la cantidad, y el nombre del elemento, y en la de abajo se muestra el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente a la derecha el precio pagado, se ha creado esta función para poder implementarlo en nuestra tabla.
+Como las comidas que van por peso como verduras frutas o pescados, se organizan de otra manera en los tickets, mostrándose en una línea la cantidad, y el nombre del elemento, y en la de abajo el peso del elemento en Kg, seguido del precio en Kg/€ y finalmente, a la derecha, el precio pagado. Se ha creado esta función para poder implementarlo en nuestra tabla.
 
 ```{r}
 weight_food <- function(df){
