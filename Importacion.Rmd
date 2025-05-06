@@ -65,19 +65,19 @@ weight_food <- function(df){
       
       for (i in c(1:nrow(df))) {
         if (df$Descripcion[i] == "PESCADO" && i + 2 <= nrow(df)){
-            df$Cantidad[i +1] <- 1 # Not specify in ticket, by default will be 1
+            df$Cantidad[i +1] <- 1 # Si no se especifica en el ticket por defecto será 1
             df$Tipo[i+1] <- "Pescado"
             df$Precio[i+1] <- gsub("[^0-9,]","",df$Precio[i + 2])
             df$Importe[i+1] <- gsub("[^0-9,]","",df$Importe[i + 2])
             df$Peso[i+1] <- gsub("[^0-9,]","",df$Descripcion[i + 2])
-            # Rows to remove
+            # Filas sobrantes a eliminar
             r_remove <- c(r_remove, i, i +2)
         }else{
             if (i < nrow(df) && is.na(df$Precio[i])){
                 df$Precio[i] <- gsub("[^0-9,]","",df$Precio[i + 1])
                 df$Importe[i] <- gsub("[^0-9,]","",df$Importe[i + 1])
                 df$Peso[i] <- gsub("[^0-9,]","",df$Descripcion[i + 1])
-                # Rows to remove
+                # Filas sobrantes a eliminar
                 r_remove <- c(r_remove, i+1)
           }
         }
@@ -94,15 +94,15 @@ Extraemos por completo los datos referentes a los elementos comprados precios y 
 Extracción de tabla del pdf.
 
 ```{r}
-# List to collect all Price Tables
+# Lista para recopilar todas las tablas de precios
 l_compras <- list()
 
-# Price Table Extraction
+# Extracción de tabla de precios
 for (i in pdfs){
-  # We take from Description to TOTAL
+  # Desde la línea Descripción hasta TOTAL
   tabl <- str_extract(i,regex("Descripción(.*?)TOTAL",dotall = TRUE))
-  tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
-  tabl <- tabl[-c(1,length(tabl))] # Extraction head and Total line
+  tabl <- unlist(strsplit(tabl, "\n")) # División por línea
+  tabl <- tabl[-c(1,length(tabl))] # Extracción de cabecera y línea Total
   
   if (any(str_detect(i,"ENTRADA"))){
     tabl <- tabl[-c(length(tabl),length(tabl) - 1)]
@@ -118,10 +118,10 @@ Transformación datos en tabla
 t_compras <- list()
 
 i <- l_compras[[2]]
-a <- 0 # ticket index counter
+a <- 0 # contador para el índice de tickets
 for(i in l_compras){
   tabl <- list()
-  a <- a + 1 # ticket index increment
+  a <- a + 1 # incremento del índice de tickets
     for (e in seq_along(i)){
         line <- i[[e]]
         
@@ -131,8 +131,8 @@ for(i in l_compras){
         descripcion <- str_extract(line, "^[^\\s].*?\\s{3,}") %>% str_trim()
         line <- sub("^[^\\s].*?\\s{3,}", "", line)%>% str_trim()
         
-        # Next Line Elemts With Weight description is na 
-        #with that character search
+        # Elementos de la siguiente línea con descripción de peso serán NA
+        # Con esa búsqueda de caracteres
         if (is.na(descripcion)){
             descripcion <- line
             precio <- NA
@@ -150,7 +150,7 @@ for(i in l_compras){
             tipo <- ""
         }
         
-        dt1 <- data.frame(index = a, #Ticket index
+        dt1 <- data.frame(index = a, # Índice del ticket
                           Cantidad = cantidad,
                           Descripcion = descripcion,
                           Precio = precio,
@@ -172,13 +172,15 @@ for(i in l_compras){
 
 ```
 
-Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1 ya que es el mismo valor, por tanto en el siguiente bloque arreglaremos estos 2 problemas.
+Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1, ya que es el mismo valor. 
+
+Por tanto, en el siguiente bloque arreglaremos estos 2 problemas.
 
 ```{r results='hide'}
 for (i in seq_along(t_compras)){
-   t_compras[[i]] <- t_compras[[i]]%>%# Change <NA> in Importe to Precio
+   t_compras[[i]] <- t_compras[[i]]%>%   # Cambiar NA en Importe a Precio
     mutate(Importe = ifelse(Importe == '', Precio, Importe)) %>%
-    # Change "," to "." and change type to numeric
+    # Cambiar "," a "." y cambiar el tipo a numérico
     mutate(across(-c(Descripcion, Tipo, index), ~ as.numeric(gsub(",", ".", .))))
 }
 ```
