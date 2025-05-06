@@ -185,7 +185,7 @@ for (i in seq_along(t_compras)){
 }
 ```
 
-Ahora para una consulta más fácil, unimos todos los tíquets en una misma tabla y usamos la columna index para poder diferenciarlos entre ellos con mayor facilidad.
+Ahora para una consulta más fácil, unimos todos los tickets en una misma tabla y usamos la columna index (índice) para poder diferenciarlos entre ellos con mayor facilidad.
 
 ```{r}
 df_p <- data.frame(index = character(),
@@ -203,27 +203,27 @@ for (i in  t_compras){
 
 ### 3.2 Datos Generales
 
-Aqui vamos a tratar de recoger y colocar en una tabla la información general de los tiquets como dirección, teléfono... entre otros.
+Aquí vamos a tratar de recoger y colocar en una tabla la información general de los tickets como dirección, teléfono... entre otros.
 
 Extracción bloque cabecera:
 
 ```{r}
-# List to collect all ticket head elements
+# Lista para recopilar todos los elementos de la cabecera del ticket
 l_head <- list()
 
-# Price Table Extraction
+# Extracción de tabla de precios
 for (i in pdfs){
-  # We take from MERCADONA to the start of the price table (Descripción)
+  # Recorremos desde MERCADONA hasta el principio de la tabla de precios (Descripción)
   tabl <- str_extract(i,regex("MERCADONA(.*?)Descripción",dotall = TRUE))
-  tabl <- unlist(strsplit(tabl, "\n")) # Division by lines
-  tabl <- tabl[-c(1,length(tabl))] # Extraction Mecadona line and table start line
+  tabl <- unlist(strsplit(tabl, "\n")) # División por líneas
+  tabl <- tabl[-c(1,length(tabl))] # Extracción línea Mecadona y línea inicio tabla
   
   l_head[[length(l_head) + 1]] <- tabl
 }
 
 ```
 
-En este bloque organizamos toda la información de la cabecera de los tiquets en un unico dataframe
+En este bloque organizamos toda la información de la cabecera de los tiquets en un único dataframe
 
 ```{r}
 df_h <- data.frame(index = numeric(),
@@ -259,7 +259,9 @@ for (i in l_head){
                    %>% as.Date(format = "%d/%m/%Y"),
     Hora = b[[4]] %>% str_extract("\\d{2}[:]\\d{2}")%>% str_trim(),
     OP = b[[4]] %>% str_extract("OP: \\d+") %>% sub("OP: ","",.)%>% str_trim(),
-    Num_Tienda = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>% 
+    
+    #Se tiene en cuenta la mala decodificación con "[AÅ]"
+    Num_Tienda = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>%
                             str_trim() %>%
                             str_split("-",simplify = TRUE)%>% .[,1],
     Num_Caja = b[[5]] %>% sub("FACTURA SIMPLIFICAD[AÅ]: ","",.) %>%
@@ -280,17 +282,17 @@ PARKING_ENTRADA <- c()
 PARKING_SALIDA <- c() 
 
 for (i in pdfs){
-   # Total Payment End Table 
+   # Tabla final de pago total 
    TP <- i %>% str_extract("TOTAL \\(€\\)\\s*(\\d+[.,]\\d{2})") %>% 
                  sub("TOTAL \\(€\\)\\s*","",.)%>% sub(",",".",.) %>% as.numeric()
    
-   # Parking Entrance
+   # Entrada Parking
    PE <- i %>% str_extract("ENTRADA \\d{2}[:]\\d{2}") %>% 
                sub("ENTRADA","",.) %>%
                str_trim() %>%
                ifelse(is.na(.), "00:00", .)
    
-   # Parking Exit
+   # Salida Parking
    PS <- i %>% str_extract("SALIDA \\d{2}[:]\\d{2}") %>% 
                sub("SALIDA","",.) %>%
                str_trim() %>%
@@ -306,28 +308,28 @@ df_h <- cbind(df_h,TOTAL_PAGO,PARKING_ENTRADA,PARKING_SALIDA )
 
 ### 3.3 Tabla IVA
 
-En este punto extraemos las tablas de los distintos IVA aplicados en los tiquet.
+En este punto extraemos las tablas de los distintos IVA aplicados en los tickets.
 
-Con este bloque extraemos como bloque la tabla entera desde el ticket colocandolas en una lista que referencia el tiquet.
+Con este bloque extraemos la tabla entera desde el ticket colocándolas en una lista que referencia el ticket.
 
 ```{r}
 l_iva <- list()
 
-# Price Table Extraction
+# Extracción de tabla de precios
 for (i in pdfs){
-  # We take from IVA to TOTAL
+  # Recorremos desde IVA hasta TOTAL
   tabl <- str_extract(i,regex("TARJETA BANCARIA\\s{3,}(.*?)TOTAL",dotall = TRUE))
-  tabl <- unlist(strsplit(tabl, "\n")) %>% str_trim() # Division by lines
-  tabl <- tabl[-c(1,2,3,length(tabl))] # Extraction head and Total 
-  tabl <- tabl %>% sub(",",".",.) # change "," to "." for converting to number type
-  tabl <- tabl %>% sub("%", "",.) # eliminates "%" for converting to number type
+  tabl <- unlist(strsplit(tabl, "\n")) %>% str_trim() # División por líneas
+  tabl <- tabl[-c(1,2,3,length(tabl))] # Extracción de cabecera y Total 
+  tabl <- tabl %>% sub(",",".",.) # cambia "," por "." para convertir en tipo numérico
+  tabl <- tabl %>% sub("%", "",.) # elimina "%" para convertir en tipo numérico
   
   l_iva[[length(l_iva) + 1]] <- tabl
 }
 
 ```
 
-En este bloque, colocamos todas las tablas en un unico data frame con una variable de índice para poder saber a que tiquet hacen referencia y enlazandolos con los otros data frames que hemos creado anteriormente.
+En este bloque, colocamos todas las tablas en un único data frame con una variable de índice para poder saber a que tiquet hacen referencia y los enlaza con los otros data frames que hemos creado anteriormente.
 
 ```{r}
 df_iva <- data.frame(index = numeric(),
