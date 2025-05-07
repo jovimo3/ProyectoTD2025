@@ -359,6 +359,25 @@ for (i in l_iva){
 En la siguietne parte vamos a resolver las siguientes preguntas propuestas por el profesor:
 
 -   ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?
+```{r}
+# Primero Filtramos solo los productos vendidos por unidades, es decir, los que no son ni fruta,verdura y pescado(!Tipo == "Fruta o Verdura" o "Pescado")
+df_unidades <- df_p %>%
+  filter(!Tipo %in% c("Fruta o Verdura", "Pescado")) %>%
+  mutate(Cantidad = as.numeric(Cantidad)) 
+
+# Luego agrupamos por producto y sumamos las cantidades
+productos_ventas <- df_unidades %>%
+  group_by(Descripcion) %>%
+  summarise(Total_Unidades_Vendidas = sum(Cantidad, na.rm = TRUE)) %>%
+  arrange(desc(Total_Unidades_Vendidas)) 
+
+# Seleccionamos los 5 productos con más ventas
+top_5_productos <- head(productos_ventas, 5)
+
+top_5_productos
+```
+Como podemos observar los 5 productos más vendidos por unidades son: el atún claro oliva(62 unidades), queso lonchas cabra( 53 unidades), bolsa plástico (51 unidades), leche desnatada de calcio (49 unidades) y por último yogur coco (40 unidades), esto muestra una gran tendencia hacia los lácteos ya que 3 de estos 5 productos son lácteos.
+
 
 -   ¿Cuántas unidades de cada uno se han vendido ?
 
