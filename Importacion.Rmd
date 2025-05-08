@@ -382,6 +382,23 @@ Como podemos observar los 5 productos más vendidos por unidades son: el atún c
 -   ¿Cuántas unidades de cada uno se han vendido ?
 
 -   Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
+```{r}
+# Filtramos los productos que entren en la categoría "Frutas y Verduras".
+df_frutas_verduras <- df_p %>%
+  filter(Tipo == "Fruta o Verdura") %>%
+  mutate(Peso = as.numeric(Peso))  
+
+# A continuación agrupamos los productos y sumamos los kilos vendidos.
+frutas_verduras_ventas <- df_frutas_verduras %>%
+  group_by(Descripcion) %>%
+  summarise(total_kilos_vendidos = sum(Peso, na.rm = TRUE)) %>%
+  arrange(desc(total_kilos_vendidos))
+
+# Seleccionamos los 5 productos con más kilos vendidos.
+top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
+
+top5_frutas_verduras
+```
 
 -   Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
 
