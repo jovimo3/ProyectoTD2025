@@ -421,6 +421,33 @@ Tabien se responderan a las siguietnes preguntas propuestas por nuestro equipo:
 -   ¿Cuánto dinero de media se gasta cada cliente en una compra?
 
 -   ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?
+```{r}
+library(lubridate)
+
+# Extraemos el mes y año de la fecha
+df_h <- df_h %>%
+  mutate(Mes = month(Fecha, label = TRUE),
+         Año = year(Fecha))
+
+# Agrupamos por año y mes, y sumamos el gasto
+gastos_mensuales <- df_h %>%
+  group_by(Año, Mes) %>%
+  summarise(Gasto_Total = sum(TOTAL_PAGO, na.rm = TRUE)) %>%
+  arrange(desc(Gasto_Total))
+
+head(gastos_mensuales)
+
+# Realizamos una gráfica para visualizar que mes es en el que más gastos se realizan.
+ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) +
+  geom_bar(stat = "identity", position = "dodge") + 
+  labs(title = "Gasto total por mes",
+       x = "Mes",
+       y = "Gasto (€)") +
+  theme_minimal()
+
+#Usamos stat = "identity" para indicar que ya dimos los valores y position="dodge" para tener en el mismo mes varias barras en el caso de tener tickets de varios. años.
+
+```
 
 -   ¿Qué productos suelen comprarse juntos?
 
