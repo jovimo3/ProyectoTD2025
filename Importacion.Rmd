@@ -448,6 +448,7 @@ ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) 
 #Usamos stat = "identity" para indicar que ya dimos los valores y position="dodge" para tener en el mismo mes varias barras en el caso de tener tickets de varios. años.
 
 ```
+Si nos fijamos en los tickets del año 2023 el mes con más gastos es diciembre, pero hay que tener en cuenta que la cantidad de tickets es menor que en el próximo año.Fijandonos en el año 2024, el período con más gastos es en enero. En el año 2025 volvemos a tener menos cantidad de tickets, siendo febrero el mes con más gastos.
 
 -   ¿Qué productos suelen comprarse juntos?
 
