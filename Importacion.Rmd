@@ -399,6 +399,8 @@ top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
 
 top5_frutas_verduras
 ```
+Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras son: el plátano (vendiendo un total de 62.868 kg), la banana 
+(vendiendo 28.140 kg), la sandia baja semillas (22.843 kg), pepino (19.624 kg) y el calabacín verde (17.754 kg). 
 
 -   Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
 
