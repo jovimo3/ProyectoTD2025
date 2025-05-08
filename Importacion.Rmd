@@ -1,6 +1,6 @@
 ---
 title: "Importacion"
-author: "Morales Martorell, Josep Vicent"
+author: "Morales Martorell, Josep Vicent, Rocio Bono Moreno"
 date: "2025-04-03"
 output:
   bookdown::pdf_document2: default
@@ -410,7 +410,7 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 
 -   Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?
 
-Tabien se responderan a las siguietnes preguntas propuestas por nuestro equipo:
+También se responderan a las siguientes preguntas propuestas por nuestro equipo:
 
 -   ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana?
 
@@ -438,6 +438,33 @@ hora_mas_frecuente
 Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 50 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
 -   ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?
+
+```{r}
+# 1.Unimos df_p con el Tipo_dia de df_h
+df_prod <- df_p %>%
+  left_join(
+    df_h %>% select(index, Tipo_dia),
+    by = "index"
+  )
+
+# 2.Calculamos la frecuencia medinte Descripcion y Tipo_dia
+top5 <- df_prod %>%
+  group_by(Tipo_dia, Descripcion) %>%
+  summarise(Frecuencia = n(), .groups = "drop") %>%
+  arrange(Tipo_dia, desc(Frecuencia)) %>%
+  group_by(Tipo_dia) %>%
+  slice_head(n = 5) #Para que nos muestre solo los 5 productos más comprados
+
+# 3.Separamos en dos tablas (Laboral y Fin de Semana)
+top5_laboral       <- top5 %>% filter(Tipo_dia == "Laboral")
+top5_fin_de_semana <- top5 %>% filter(Tipo_dia == "Fin de semana")
+
+top5_laboral
+top5_fin_de_semana
+```
+
+Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
+
 
 -   ¿El precio total de la compra varían según la ciudad o zona?
 
