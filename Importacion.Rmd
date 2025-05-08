@@ -430,8 +430,8 @@ df_h %>%
   mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
   filter(dia_semana == "domingo")
 ```
-Si tuviese que cerrar un día, obviamente sería el domingo, donde solo se encuentran 3 tickets. Haciendo un poco más de indagación, debido a que los domingos ningún Mercadona abre por normativa, hemos descubierto que estos 3 tickets corresponden a uno solo, del 24/12/2023 en Benijofar.
-Por extraño que parezca, debido a que es un ticket real, no se puede considerar outlier por lo que el día que menos se vende es domingo según nuestros datos. 
+
+Según el diagrama el día entre semana con menos tickets y por lo tanto ventas, es el jueves. Por lo que lo más inteligente sería cerrar este día, ya que es cuando menos gente va a Mercadona.
 
 
 
