@@ -22,6 +22,7 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(stringr)
+library(lubridate)
 ```
 
 ## 2. Carga Pdfs
@@ -410,6 +411,31 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 
 -   Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?
 
+```{r}
+df_h %>%
+  mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
+  group_by(dia_semana) %>%
+  summarise(n_tickets = n()) %>%
+  arrange(desc(n_tickets)) %>%
+  ggplot(aes(x = dia_semana, y = n_tickets)) +
+  geom_col(fill = "#1f77b4") +
+  labs(
+    title = "Número de tickets por día de la semana",
+    x = "Día de la semana",
+    y = "Número de tickets"
+  ) +
+  theme_minimal()
+
+df_h %>%
+  mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
+  filter(dia_semana == "domingo")
+```
+Si tuviese que cerrar un día, obviamente sería el domingo, donde solo se encuentran 3 tickets. Haciendo un poco más de indagación, debido a que los domingos ningún Mercadona abre por normativa, hemos descubierto que estos 3 tickets corresponden a uno solo, del 24/12/2023 en Benijofar.
+Por extraño que parezca, debido a que es un ticket real, no se puede considerar outlier por lo que el día que menos se vende es domingo según nuestros datos. 
+
+
+
+
 También se responderan a las siguientes preguntas propuestas por nuestro equipo:
 
 -   ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana?
@@ -573,7 +599,65 @@ Si nos fijamos en los tickets del año 2023 el mes con más gastos es diciembre,
 
 -   ¿De los 5 productos más comprados, cual de ellos ha subido más el precio?
 
+```{r}
+# Paso 1: fusionar df de productos con df de tickets con la fecha usando la variable 'index'
+df_p_fecha <- df_p %>%
+  left_join(df_h %>% select(index, Fecha), by = "index")
+
+# Paso 2: encontrar los 5 productos más comprados
+top5 <- df_p_fecha %>%
+  count(Descripcion, sort = TRUE) %>%
+  slice_head(n = 5) %>%
+  pull(Descripcion) # Obtengo como vector la descripción del top 5 para después usarlo como filtro
+
+# Paso 3: analizar subida de precio en el tiempo
+subida_precio <- df_p_fecha %>%
+  filter(Descripcion %in% top5, !is.na(Precio)) %>% # Aplico el filtro para quedarme con el top 5
+  arrange(Descripcion, Fecha) %>%
+  group_by(Descripcion) %>%
+  summarise(
+    precio_inicial = first(Precio),
+    precio_final = last(Precio),
+    diferencia = precio_final - precio_inicial
+  ) %>%
+  arrange(desc(diferencia))  # Para ver los que más subieron de precio en orden
+
+subida_precio
+
+```
+
+El producto que más ha subido de precio del top 5 productos más comprados es el plátano, 46 céntimos más. 
+
+
 -   ¿De los 5 productos más comprados, cual de ellos ha bajado más el precio?
+
+```{r}
+df_p_fecha <- df_p %>%
+  left_join(df_h %>% select(index, Fecha), by = "index")
+
+# Paso 2: encontrar los 5 productos más comprados
+top5 <- df_p_fecha %>%
+  count(Descripcion, sort = TRUE) %>%
+  slice_head(n = 5) %>%
+  pull(Descripcion) # Obtengo como vector la descripción del top 5 para después usarlo como filtro
+
+# Paso 3: analizar bajada de precio en el tiempo
+bajada_precio <- df_p_fecha %>%
+  filter(Descripcion %in% top5, !is.na(Precio)) %>% # Aplico el filtro para quedarme con el top 5
+  arrange(Descripcion, Fecha) %>%
+  group_by(Descripcion) %>%
+  summarise(
+    precio_inicial = first(Precio),
+    precio_final = last(Precio),
+    diferencia = precio_final - precio_inicial
+  ) %>%
+  arrange(diferencia)  # Para ver los que más bajaron de precio en orden
+
+bajada_precio
+```
+
+El producto que más ha bajado de precio del top 5 productos más comprados es el filete pechuga, 53 céntimos más. 
+
 
 -   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
 
