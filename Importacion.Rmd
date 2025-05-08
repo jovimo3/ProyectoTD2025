@@ -358,7 +358,7 @@ for (i in l_iva){
 
 En la siguietne parte vamos a resolver las siguientes preguntas propuestas por el profesor:
 
--   ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?
+-   ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?-   ¿Cuántas unidades de cada uno se han vendido ?
 ```{r}
 # Primero Filtramos solo los productos vendidos por unidades, es decir, los que no son ni fruta,verdura y pescado(!Tipo == "Fruta o Verdura" o "Pescado")
 df_unidades <- df_p %>%
@@ -379,7 +379,7 @@ top_5_productos
 Como podemos observar los 5 productos más vendidos por unidades son: el atún claro oliva(62 unidades), queso lonchas cabra( 53 unidades), bolsa plástico (51 unidades), leche desnatada de calcio (49 unidades) y por último yogur coco (40 unidades), esto muestra una gran tendencia hacia los lácteos ya que 3 de estos 5 productos son lácteos.
 
 
--   ¿Cuántas unidades de cada uno se han vendido ?
+
 
 -   Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
 ```{r}
@@ -413,6 +413,29 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 Tabien se responderan a las siguietnes preguntas propuestas por nuestro equipo:
 
 -   ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana?
+
+```{r}
+# Primero nos aseguramos de que 'Hora' esté en formato adecuado
+df_h$Hora <- as.POSIXct(df_h$Hora, format = "%H:%M", tz = "UTC")
+
+# Luego extraemos la hora (sin minutos)
+df_h$Hora_hora <- hour(df_h$Hora)
+
+# Creamos la variable Tipo_dia (Laboral / Fin de semana)
+df_h$Dia_semana <- weekdays(df_h$Fecha)
+df_h$Tipo_dia <- ifelse(df_h$Dia_semana %in% c("Saturday", "Sunday"), "Fin de semana", "Laboral")
+
+# Contamos las compras por hora, y las agrupamos por tipo de día (laboral y fin de semana)
+hora_mas_frecuente <- df_h %>%
+  group_by(Tipo_dia, Hora_hora) %>%
+  summarise(N_compras = n(), .groups = "drop") %>%
+  group_by(Tipo_dia) %>%
+  slice_max(N_compras, n = 1) %>%
+  arrange(Tipo_dia, Hora_hora)
+
+hora_mas_frecuente
+```
+Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 50 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
 -   ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?
 
