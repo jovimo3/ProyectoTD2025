@@ -584,6 +584,25 @@ ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) 
 Si nos fijamos en los tickets del año 2023 el mes con más gastos es diciembre, pero hay que tener en cuenta que la cantidad de tickets es menor que en el próximo año.Fijandonos en el año 2024, el período con más gastos es en enero. En el año 2025 volvemos a tener menos cantidad de tickets, siendo febrero el mes con más gastos.
 
 -   ¿Qué productos suelen comprarse juntos?
+```{r}
+library(dplyr)
+
+# Filtramos solo las columnas importantes y eliminamos los duplicados por ticket
+df_limpio <- df_p %>%
+  filter(!is.na(Descripcion)) %>%
+  select(index, Descripcion) %>%
+  distinct()
+
+coocurrencias <- df_limpio %>%
+  inner_join(df_limpio, by = "index") %>%
+  filter(Descripcion.x != Descripcion.y) %>% 
+  group_by(Descripcion.x, Descripcion.y) %>%
+  summarise(Frecuencia = n(), .groups = "drop") %>%
+  arrange(desc(Frecuencia))
+
+head(coocurrencias, 10)
+```
+Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva".
 
 -   ¿Cuál es el producto más caro registrado en los tickets?
 
