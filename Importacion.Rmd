@@ -605,6 +605,18 @@ head(coocurrencias, 10)
 Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva".
 
 -   ¿Cuál es el producto más caro registrado en los tickets?
+```{r}
+df_p$Importe <- as.numeric(df_p$Importe)
+
+# Encontrar la fila con el mayor importe, usando slice para seleccionar la 1 fila.
+producto_mas_caro <- df_p %>%
+  filter(!is.na(Importe)) %>%
+  arrange(desc(Importe)) %>%
+  slice(1)
+
+producto_mas_caro
+```
+El producto más caro registrado es el "alistado mediano", que tiene un precio de 31.33 euros.
 
 -   ¿Hay una cantidad media de productos por tickets?
 
