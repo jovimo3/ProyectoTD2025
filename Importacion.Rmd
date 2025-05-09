@@ -693,3 +693,24 @@ Por lo que podemos concluir, que cuando se utiliza el parking es más probable q
 
 
 -   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?
+
+```{r}
+df_parking_tiempos <- df_h %>%
+  select(PARKING_ENTRADA, PARKING_SALIDA) %>%
+  filter(PARKING_ENTRADA != "00:00") %>%
+  mutate(
+    # Convertir las horas de entrada y salida a formato tiempo
+    PARKING_ENTRADA = as.POSIXct(PARKING_ENTRADA, format = "%H:%M", tz = "UTC"),
+    PARKING_SALIDA = as.POSIXct(PARKING_SALIDA, format = "%H:%M", tz = "UTC"),
+    
+    # Calcular la diferencia en minutos
+    tiempo_diferencia = as.numeric(PARKING_SALIDA - PARKING_ENTRADA)
+  )
+
+# Calcular el tiempo medio
+tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
+tiempo_medio
+```
+El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
+
+
