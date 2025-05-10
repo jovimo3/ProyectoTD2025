@@ -69,3 +69,56 @@ texto
 
 
 ```
+
+\nolinenumbers
+## LISTADO DE PREGUNTAS PLANTEADAS:
+\linenumbers
+
+1.-¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ? ¿Cuántas unidades de cada uno se han vendido ?
+
+2.-Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ? 
+
+3.-Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ? 
+
+4.-Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+
+5.-¿Cuál es la procedencia de los tickets ?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ? 
+
+6.-Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías? 
+
+7.-¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana?
+
+8.-¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?
+
+9.-¿El precio total de la compra varían según la ciudad o zona?
+
+10.-¿Cuánto dinero de media se gasta cada cliente en una compra?
+
+11.-¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad? 
+
+12.-¿Qué productos suelen comprarse juntos?
+
+13.-¿Cuál es el producto más caro registrado en los tickets?
+
+14.-¿Hay una cantidad  media de productos por tickets? 
+
+15.-¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?
+
+16.-¿Que productos son los más comprados durante las diferentes estaciones, verano (1 de junio - 31 de agosto),  invierno(21 diciembre - 20 marzo)... ? (representación gráfica)
+
+17.-¿En que estación se compra más?¿Por que crees que és?
+
+18.-¿Cuánto supone económicamente de media el IVA en las compras?
+
+19.-¿De los 5 productos más comprados, cual de ellos ha subido más el precio?¿y cual ha bajado más su precio? 
+
+20.- ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
+
+21.-¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no? 
+
+22.-¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking? 
+
+\newpage
+\nolinenumbers
+
+
