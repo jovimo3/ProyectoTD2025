@@ -119,6 +119,8 @@ texto
 22.-¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking? 
 
 \newpage
+
+## Preguntas 
 \nolinenumbers
 
 
@@ -147,3 +149,45 @@ top_5_productos <- head(productos_ventas, 5)
 top_5_productos
 
 ```
+
+\nolinenumbers
+
+**Pregunta 2: Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos?**
+
+\linenumbers
+
+Dentro de la categoría de FRUTAS y VERDURAS los 5 productos más vendidos son: el plátano (vendiendo un total de 62.868 kg), la banana 
+(28.140 kg), la sandia baja semillas (22.843 kg), pepino (19.624 kg) y el calabacín verde (17.754 kg). 
+
+```{r}
+# Filtramos los productos que entren en la categoría "Frutas y Verduras".
+df_frutas_verduras <- df_p %>%
+  filter(Tipo == "Fruta o Verdura") %>%
+  mutate(Peso = as.numeric(Peso))  
+
+# A continuación agrupamos los productos y sumamos los kilos vendidos.
+frutas_verduras_ventas <- df_frutas_verduras %>%
+  group_by(Descripcion) %>%
+  summarise(total_kilos_vendidos = sum(Peso, na.rm = TRUE)) %>%
+  arrange(desc(total_kilos_vendidos))
+
+# Seleccionamos los 5 productos con más kilos vendidos.
+top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
+
+top5_frutas_verduras
+```
+
+\nolinenumbers
+
+**Pregunta 3 : Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos?**
+
+\linenumbers
+
+
+
+
+\nolinenumbers
+
+**Pregunta 4 : Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.**
+
+\linenumbers
