@@ -1,0 +1,71 @@
+---
+  title: "MEMORIA TRATAMIENTO DE DATOS \\newline "
+author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
+date: "2025-05-10"
+output:
+  pdf_document:
+  latex_engine: xelatex
+toc: yes
+toc_depth: 4
+number_sections: no
+fig_caption: yes
+html_document:
+  toc: yes
+toc_depth: 3
+df_print: paged
+header-includes:
+  - \usepackage[labelfont=bf,justification=raggedright,singlelinecheck=false]{caption}
+- \usepackage{lineno}
+
+---
+  
+  
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FALSE)
+```
+
+```{r, results='hide'} 
+install.packages("gridExtra", repos="https://cran.rstudio.com/")
+```
+
+\newpage
+
+\nolinenumbers
+
+# Introducción
+
+\linenumbers
+texto
+
+\nolinenumbers
+## Nuestro Proyecto
+
+\linenumbers
+texto
+
+\nolinenumbers
+## Recursos utilizados y estructura de trabajo
+
+\linenumbers
+
+texto
+
+\nolinenumbers
+## Variables y estruturas de los datos
+
+\linenumbers
+
+
+texto
+\newpage
+
+\nolinenumbers
+## Características generales de nuestros datos y nuestras variables
+\linenumbers
+
+texto
+```{r, results='hide'}
+
+
+
+```
