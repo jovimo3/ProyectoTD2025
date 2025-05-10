@@ -120,7 +120,7 @@ texto
 
 \newpage
 
-## Preguntas 
+## Preguntas obligatorias:
 \nolinenumbers
 
 
@@ -189,5 +189,11 @@ top5_frutas_verduras
 \nolinenumbers
 
 **Pregunta 4 : Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.**
+
+\linenumbers
+
+\nolinenumbers
+
+**Pregunta 5  :¿Cuál es la procedencia de los tickets?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ? **
 
 \linenumbers
