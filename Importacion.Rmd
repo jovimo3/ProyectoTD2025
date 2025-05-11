@@ -443,7 +443,18 @@ Se puede observar en las gráficas que el precio del platano es mucho más varia
 
 También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
 
+
+
 -   ¿ Cuál es la procedencia de los tickets ?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ?
+
+Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencias de los tickets. Para saber las ciudades donde se compra más agruparemos por ciudades i contaremos el numero de casos que hay.
+
+```{r}
+df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+```
+Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
+
+
 
 -   Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?
 
