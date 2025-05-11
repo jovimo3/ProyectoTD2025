@@ -629,7 +629,7 @@ resumen_gasto <- df_h %>%
 # 2. Mostrar el resultado
 resumen_gasto
 ```
-En nuestro estudio tenemos 303 tickets, el gasto medio de cada cliente es de 46,3€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,32. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€.
+En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€.
 
 -   ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?
 ```{r}
