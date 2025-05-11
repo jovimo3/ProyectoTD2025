@@ -220,8 +220,28 @@ top5_frutas_verduras
 
 **Pregunta 6  : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?  **
 ```{r}
+df_h %>%
+  mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
+  group_by(dia_semana) %>%
+  summarise(n_tickets = n()) %>%
+  arrange(desc(n_tickets)) %>%
+  ggplot(aes(x = dia_semana, y = n_tickets)) +
+  geom_col(fill = "lightblue") +
+  labs(
+    title = "Número de tickets por día de la semana",
+    x = "Día de la semana",
+    y = "Número de tickets"
+  ) +
+  theme_minimal()
 
+df_h %>%
+  mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
+  filter(dia_semana == "domingo")
 ```
+
+Según el diagrama el día entre semana con menos tickets y por lo tanto ventas, es el jueves. Por lo que lo más inteligente sería cerrar este día, ya que es cuando menos gente va a Mercadona.
+
+
 \linenumbers
 
 ## Resto de preguntas propuestas:
