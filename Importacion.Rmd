@@ -496,7 +496,7 @@ df_h$Hora_hora <- hour(df_h$Hora)
 
 # Creamos la variable Tipo_dia (Laboral / Fin de semana)
 df_h$Dia_semana <- weekdays(df_h$Fecha)
-df_h$Tipo_dia <- ifelse(df_h$Dia_semana %in% c("Saturday", "Sunday"), "Fin de semana", "Laboral")
+df_h$Tipo_dia <- ifelse(df_h$Dia_semana %in% c("sábado", "domingo"), "Fin de semana", "Laboral")
 
 # Contamos las compras por hora, y las agrupamos por tipo de día (laboral y fin de semana)
 hora_mas_frecuente <- df_h %>%
