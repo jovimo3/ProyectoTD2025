@@ -471,8 +471,31 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 \linenumbers
 
 ```{r}
+# Crear df_parking con la información del uso del parking
+df_parking <- df_h %>%
+  select(index, PARKING_ENTRADA) %>%
+  mutate(usado_parking = PARKING_ENTRADA != "00:00") %>%
+  select(index, usado_parking)
+
+# Unir con df_p y contar productos distintos por ticket
+productos_por_ticket <- df_p %>%
+  left_join(df_parking, by = "index") %>%
+  group_by(index, usado_parking) %>%
+  summarise(num_productos = n())
+
+# Calcular estadísticas de comparación
+usado_parking_df <- productos_por_ticket %>%
+  group_by(usado_parking) %>%
+  summarise(mediana_prod = median(num_productos),total_prod = n())
+
+usado_parking_df
 
 ```
+
+Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
+
+Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
+
 
 \nolinenumbers
 
