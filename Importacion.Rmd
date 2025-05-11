@@ -31,9 +31,13 @@ Los tickets que queremos analizar se encuentran en formato .pdf, y se encuentran
 
 ```{r results='hide'}
 dir <- "data/"
-# Charge all pdfs from folder data
-pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)%>%
-        lapply(pdf_text)
+# Cargamos todos los pdf de la carpeta data
+pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)
+
+#Eliminamos aquellos que contengan O╠é ya que no nos sirven(repetidos)
+pdfs <- pdfs[!str_detect(pdfs,pattern = "O╠é")] %>% lapply(pdf_text)
+
+
 ```
 
 ## 3. Transformación
