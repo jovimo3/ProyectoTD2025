@@ -689,66 +689,35 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 
 -   ¿Que productos son los más comprados durante el invierno(21 diciembre - 20 marzo)?
 
--   ¿De los 5 productos más comprados, cual de ellos ha subido más el precio?
+-   ¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo, haz una gráfica para apreciarlo mejor?
 
 ```{r}
-# Paso 1: fusionar df de productos con df de tickets con la fecha usando la variable 'index'
-df_p_fecha <- df_p %>%
-  left_join(df_h %>% select(index, Fecha), by = "index")
-
-# Paso 2: encontrar los 5 productos más comprados
-top5 <- df_p_fecha %>%
-  count(Descripcion, sort = TRUE) %>%
-  slice_head(n = 5) %>%
-  pull(Descripcion) # Obtengo como vector la descripción del top 5 para después usarlo como filtro
-
-# Paso 3: analizar subida de precio en el tiempo
-subida_precio <- df_p_fecha %>%
-  filter(Descripcion %in% top5, !is.na(Precio)) %>% # Aplico el filtro para quedarme con el top 5
-  arrange(Descripcion, Fecha) %>%
+# Filtrar productos con "aceite", extraer mes y tipo
+df_aceite <- df_p %>%
+  filter(str_detect(Descripcion, "ACEITE")) %>%
+  left_join(df_h, by = "index") %>%
+  mutate(
+    mes = month(Fecha, label = TRUE, abbr = TRUE)) %>%
+  group_by(mes, Descripcion) %>%
+  summarise(precio_medio = mean(Precio)) %>%
   group_by(Descripcion) %>%
-  summarise(
-    precio_inicial = first(Precio),
-    precio_final = last(Precio),
-    diferencia = precio_final - precio_inicial
-  ) %>%
-  arrange(desc(diferencia))  # Para ver los que más subieron de precio en orden
+  filter(n() > 1) %>%  # Filtrar solo los tipos que aparecen en más de un mes
+  ungroup()
 
-subida_precio
-
+# Visualizar evolución del precio por tipo de aceite
+ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = Descripcion)) +
+  geom_line(size = 1.2) +
+  geom_point() +
+  labs(
+    title = "Evolución mensual del precio del aceite",
+    x = "Mes",
+    y = "Precio",
+    color = "Tipo de aceite"
+  ) 
 ```
 
-El producto que más ha subido de precio del top 5 productos más comprados es el plátano, 46 céntimos más. 
+Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados. 
 
-
--   ¿De los 5 productos más comprados, cual de ellos ha bajado más el precio?
-
-```{r}
-df_p_fecha <- df_p %>%
-  left_join(df_h %>% select(index, Fecha), by = "index")
-
-# Paso 2: encontrar los 5 productos más comprados
-top5 <- df_p_fecha %>%
-  count(Descripcion, sort = TRUE) %>%
-  slice_head(n = 5) %>%
-  pull(Descripcion) # Obtengo como vector la descripción del top 5 para después usarlo como filtro
-
-# Paso 3: analizar bajada de precio en el tiempo
-bajada_precio <- df_p_fecha %>%
-  filter(Descripcion %in% top5, !is.na(Precio)) %>% # Aplico el filtro para quedarme con el top 5
-  arrange(Descripcion, Fecha) %>%
-  group_by(Descripcion) %>%
-  summarise(
-    precio_inicial = first(Precio),
-    precio_final = last(Precio),
-    diferencia = precio_final - precio_inicial
-  ) %>%
-  arrange(diferencia)  # Para ver los que más bajaron de precio en orden
-
-bajada_precio
-```
-
-El producto que más ha bajado de precio del top 5 productos más comprados es el filete pechuga, 53 céntimos más. 
 
 
 -   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
@@ -803,6 +772,7 @@ df_parking_tiempos <- df_h %>%
 tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
 tiempo_medio
 ```
+
 El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
 
 
