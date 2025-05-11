@@ -1,5 +1,6 @@
 ---
-  title: "MEMORIA TRATAMIENTO DE DATOS \\newline "
+  title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
+
 author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
 date: "2025-05-10"
 output:
@@ -43,21 +44,32 @@ library(lubridate)
 
 # Introducción
 
+# Contexto del proyecto
+
 \linenumbers
-texto
+En la actualidad donde la información ha pasado a ser uno de los elementos más preciados, el análisis de datos juega un papel muy importante tanto en la toma de decisiones estratégicas como operativas. La gran cantidad de datos ha impulsado la necesidad de convertir estos mismos en conocimientos aplicables, lo que convierte el análisis exploratorio en una herramienta esencial en múltiples sectores.
+
+Como futuros científicos de datos, nuestro trabajo consistirá en extraer la información más relevante de una gran cantidad de datos. En este proyecto, los tickets representaran nuestra fuente de datos, donde mediante estos, podremos descubrir: preferencias, hábitos y comportamientos de los consumidores. A través de ellos, también podemos interpretar patrones ocultos, prever necesidades futuras y generar estrategias que optimicen tanto la experiencia del cliente como la gestión empresarial.
+
+Analizando los registros de venta recogidos en los tickets, es posible obtener conclusiones relevantes para áreas como el control de inventario, el diseño de promociones o la personalización de servicios. Esto no solo mejora la eficiencia interna, sino que permite responder de forma ágil y efectiva a las demandas del mercado.
 
 \nolinenumbers
 ## Nuestro Proyecto
 
 \linenumbers
-texto
+Este proyecto nace con la necesidad de convertir datos sin procesar - provenientes de tickets de Mercadona- en información valiosa mediante técnicas de limpieza, transformación y análisis exploratorio. A través de una serie de scripts en R, hemos diseñado un modelo de trabajo que permite capturar los aspectos más relevantes del consumo cotidiano, con el objetivo de ofrecer herramientas útiles para la toma de decisiones comerciales.
+
+
+La metodología utilizada combina la programación en R con recursos de visualización y manipulación de datos. Nuestro trabajo no se limita en organizar los datos, sino que busca identificar correlaciones, tendencias y patrones de comportamiento. A través de este proceso, contribuimos al entendimiento de dinámicas reales del mercado y fomentamos un entorno donde el dato procesado se convierte en una ventaja competitiva.
 
 \nolinenumbers
 ## Recursos utilizados y estructura de trabajo
 
 \linenumbers
 
-texto
+Para llevar a cabo este análisis, hemos empleado librerías fundamentales de R como readr, dplyr, stringr, tibble y ggplot2, entre otras. Estas herramientas nos han permitido estructurar los datos de manera eficiente, realizar filtrados específicos, transformar cadenas de texto y crear visualizaciones útiles.
+
+El proceso inicial incluyó la conversión de los archivos PDF a texto plano mediante el uso de las funciones de la librería pdftools. Luego, se procedió a extraer la información de interés, organizándola en dataframes preparados para su análisis posterior. Una parte esencial fue la limpieza de los datos: corregir errores, homogeneizar formatos y validar los campos esenciales para obtener un dataset sólido y confiable.
 
 \nolinenumbers
 ## Variables y estruturas de los datos
@@ -65,7 +77,7 @@ texto
 \linenumbers
 
 
-texto
+En esta primera fase, trabajamos con un conjunto de diferentes variables , que abarcan tanto información general del ticket (fecha, hora, importe total, tienda, caja, número de ticket) como detalles específicos de los productos adquiridos (nombre del producto, cantidad, precio unitario, tipo de producto, peso o unidad, entre otros).
 \newpage
 
 \nolinenumbers
