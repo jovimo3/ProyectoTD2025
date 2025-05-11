@@ -157,7 +157,7 @@ top_5_productos
 \linenumbers
 
 Dentro de la categoría de FRUTAS y VERDURAS los 5 productos más vendidos son: el plátano (vendiendo un total de 62.868 kg), la banana 
-(28.140 kg), la sandia baja semillas (22.843 kg), pepino (19.624 kg) y el calabacín verde (17.754 kg). 
+(28.140 kg), la sandia baja semillas (22.843 kg), el pepino (19.624 kg) y el calabacín verde (17.754 kg). 
 
 ```{r}
 # Filtramos los productos que entren en la categoría "Frutas y Verduras".
@@ -268,9 +268,37 @@ top5_frutas_verduras
 
 \linenumbers
 
+Para resolver esta pregunta podemos realizar un gráfico de barras para observar mejor la información. En este gráfico se representan los datos de distintos tickets de 3 años diferentes (2023, 2024 y 2025). Al tener diferentes cantidades de tickets por mes de un año a otro, tenemos que decir un período por cada año de tickets (en este caso 3 meses). Por lo que este período no tiene porque coincidir todos los años. 
+
 ```{r}
+library(lubridate)
+
+# Extraemos el mes y año de la fecha
+df_h <- df_h %>%
+  mutate(Mes = month(Fecha, label = TRUE),
+         Año = year(Fecha))
+
+# Agrupamos por año y mes, y sumamos el gasto
+gastos_mensuales <- df_h %>%
+  group_by(Año, Mes) %>%
+  summarise(Gasto_Total = sum(TOTAL_PAGO, na.rm = TRUE)) %>%
+  arrange(desc(Gasto_Total))
+
+head(gastos_mensuales)
+
+# Realizamos una gráfica para visualizar que mes es en el que más gastos se realizan.
+ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) +
+  geom_bar(stat = "identity", position = "dodge") + 
+  labs(title = "Gasto total por mes",
+       x = "Mes",
+       y = "Gasto (€)") +
+  theme_minimal()
+
+#Usamos stat = "identity" para indicar que ya dimos los valores y position="dodge" para tener en el mismo mes varias barras en el caso de tener tickets de varios. años.
 
 ```
+Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos es diciembre. Fijandonos en el año 2024 (verde), el período con más gastos es en enero (siendo el único año con tickets todos los meses). En el año 2025 (azul) es febrero el mes con más gastos. Por lo que el período con más gastos no es en la época de Navidad.
+
 
 \nolinenumbers
 
@@ -280,8 +308,24 @@ top5_frutas_verduras
 \linenumbers
 
 ```{r}
+library(dplyr)
 
+# Filtramos solo las columnas importantes y eliminamos los duplicados por ticket
+df_limpio <- df_p %>%
+  filter(!is.na(Descripcion)) %>%
+  select(index, Descripcion) %>%
+  distinct()
+
+coocurrencias <- df_limpio %>%
+  inner_join(df_limpio, by = "index") %>%
+  filter(Descripcion.x != Descripcion.y) %>% 
+  group_by(Descripcion.x, Descripcion.y) %>%
+  summarise(Frecuencia = n(), .groups = "drop") %>%
+  arrange(desc(Frecuencia))
+
+head(coocurrencias, 10)
 ```
+Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva". Esto también ocurre a la viceversa.
 
 \nolinenumbers
 
@@ -291,8 +335,17 @@ top5_frutas_verduras
 \linenumbers
 
 ```{r}
+df_p$Importe <- as.numeric(df_p$Importe)
 
+# Encontrar la fila con el mayor importe, usando slice para seleccionar la 1 fila.
+producto_mas_caro <- df_p %>%
+  filter(!is.na(Importe)) %>%
+  arrange(desc(Importe)) %>%
+  slice(1)
+
+producto_mas_caro
 ```
+El producto más caro registrado es el "alistado mediano", que tiene un precio de 31.33 euros.
 
 \nolinenumbers
 
@@ -302,5 +355,15 @@ top5_frutas_verduras
 \linenumbers
 
 ```{r}
+df_p$Cantidad <- as.numeric(df_p$Cantidad)
 
+# Agrupar por ticket y sumar cantidades de productos por ticket
+productos_por_ticket <- df_p %>%
+  group_by(index) %>%
+  summarise(Total_Productos = sum(Cantidad, na.rm = TRUE))
+
+media_productos <- mean(productos_por_ticket$Total_Productos)
+
+media_productos
 ```
+La cantidad media de productos por ticket es de 18.80198 productos.
