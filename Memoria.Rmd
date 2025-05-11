@@ -183,7 +183,9 @@ top5_frutas_verduras
 
 \linenumbers
 
+```{r}
 
+```
 
 
 \nolinenumbers
@@ -192,8 +194,113 @@ top5_frutas_verduras
 
 \linenumbers
 
+```{r}
+
+```
+
 \nolinenumbers
 
 **Pregunta 5  :¿Cuál es la procedencia de los tickets?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ? **
 
 \linenumbers
+
+```{r}
+
+```
+\nolinenumbers
+
+**Pregunta 6  : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?  **
+```{r}
+
+```
+\linenumbers
+
+## Resto de preguntas propuestas:
+
+\nolinenumbers
+
+
+**Pregunta : ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿El precio total de la compra varían según la ciudad o zona? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Cuánto dinero de media se gasta cada cliente en una compra?  **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?  **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Qué productos suelen comprarse juntos?  **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Cuál es el producto más caro registrado en los tickets? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta : ¿Hay una cantidad  media de productos por tickets?  **
+
+\linenumbers
+
+```{r}
+
+```
