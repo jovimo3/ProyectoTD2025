@@ -411,6 +411,38 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 
 -   Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
+Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
+
+```{r}
+library(patchwork)
+#Preparación de datos
+plat_ban <- inner_join(df_p, df_h, by = "index")
+plat_ban <- plat_ban %>% arrange(Fecha)
+
+
+#Banana
+banana <- plat_ban %>% filter(Descripcion == "BANANA") %>% mutate(Fecha = as.factor(Fecha))
+
+#Utilizando table comprobamos que hay dos fechas iguales por tanto eliminaremos una de ellas, ya que el mismo dia cuesta los mismo
+banana <- banana %>% filter(index != 270)
+
+#Para comparar utilizaremos la columna Precio (es la que representa €/kg)
+
+ggbanana <- ggplot(banana, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Banana")
+
+#Platano
+platano <- plat_ban %>% filter(Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
+#Nuevamente tenemos dos casos donde hay compras en la misma fecha. Borramos para dejarnos uno por dia
+
+platano <- platano %>% filter(index != 188 & index != 191 & index != 216 & index != 218)
+ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
+ggplatano + ggbanana
+```
+Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio. 
+
+También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
+
 -   ¿ Cuál es la procedencia de los tickets ?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ?
 
 -   Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?
