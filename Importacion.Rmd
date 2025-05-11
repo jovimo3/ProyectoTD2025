@@ -465,7 +465,7 @@ df_h %>%
   summarise(n_tickets = n()) %>%
   arrange(desc(n_tickets)) %>%
   ggplot(aes(x = dia_semana, y = n_tickets)) +
-  geom_col(fill = "#1f77b4") +
+  geom_col(fill = "lightblue") +
   labs(
     title = "Número de tickets por día de la semana",
     x = "Día de la semana",
