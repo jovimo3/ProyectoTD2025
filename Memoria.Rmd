@@ -28,6 +28,15 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FA
 install.packages("gridExtra", repos="https://cran.rstudio.com/")
 ```
 
+```{r results='hide', include=FALSE}
+library(pdftools)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(lubridate)
+```
+
 \newpage
 
 \nolinenumbers
@@ -220,7 +229,7 @@ top5_frutas_verduras
 \nolinenumbers
 
 
-**Pregunta : ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana? **
+**Pregunta 7 : ¿Cuál es la hora más habitual para realizar la compra? ¿Este horario varía entre los días laborales y los fines de semana? **
 
 \linenumbers
 
@@ -231,7 +240,7 @@ top5_frutas_verduras
 \nolinenumbers
 
 
-**Pregunta : ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana? **
+**Pregunta 8 : ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana? **
 
 \linenumbers
 
@@ -242,7 +251,7 @@ top5_frutas_verduras
 \nolinenumbers
 
 
-**Pregunta : ¿El precio total de la compra varían según la ciudad o zona? **
+**Pregunta 9 : ¿El precio total de la compra varían según la ciudad o zona? **
 
 \linenumbers
 
@@ -253,7 +262,7 @@ top5_frutas_verduras
 \nolinenumbers
 
 
-**Pregunta : ¿Cuánto dinero de media se gasta cada cliente en una compra?  **
+**Pregunta 10 : ¿Cuánto dinero de media se gasta cada cliente en una compra?  **
 
 \linenumbers
 
@@ -264,7 +273,7 @@ top5_frutas_verduras
 \nolinenumbers
 
 
-**Pregunta : ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?  **
+**Pregunta 11 : ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?  **
 
 \linenumbers
 
@@ -303,7 +312,7 @@ Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos 
 \nolinenumbers
 
 
-**Pregunta : ¿Qué productos suelen comprarse juntos?  **
+**Pregunta 12 : ¿Qué productos suelen comprarse juntos?  **
 
 \linenumbers
 
@@ -330,7 +339,7 @@ Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "p
 \nolinenumbers
 
 
-**Pregunta : ¿Cuál es el producto más caro registrado en los tickets? **
+**Pregunta 13 : ¿Cuál es el producto más caro registrado en los tickets? **
 
 \linenumbers
 
@@ -350,7 +359,7 @@ El producto más caro registrado es el "alistado mediano", que tiene un precio d
 \nolinenumbers
 
 
-**Pregunta : ¿Hay una cantidad  media de productos por tickets?  **
+**Pregunta 14 : ¿Hay una cantidad  media de productos por tickets?  **
 
 \linenumbers
 
@@ -367,3 +376,96 @@ media_productos <- mean(productos_por_ticket$Total_Productos)
 media_productos
 ```
 La cantidad media de productos por ticket es de 18.80198 productos.
+
+\nolinenumbers
+
+
+**Pregunta 15 : ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?  **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (21 de junio - 22 de septiempre),  invierno(21 diciembre - 20 marzo)... ? (representación gráfica) **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 17 : ¿En que estación se compra más?¿Por que crees que és?**
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 18 :¿Cuánto supone económicamente de media el IVA en las compras?**
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 19 : ¿De los 5 productos más comprados, cual de ellos ha subido más el precio?¿y cual ha bajado más su precio? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 20 : ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?**
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 21 :¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+**Pregunta 22 : ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking? **
+
+\linenumbers
+
+```{r}
+
+```
+
+\nolinenumbers
+
+
+
