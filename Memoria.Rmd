@@ -266,8 +266,27 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# Primero nos aseguramos de que 'Hora' esté en formato adecuado
+df_h$Hora <- as.POSIXct(df_h$Hora, format = "%H:%M", tz = "UTC")
 
+# Luego extraemos la hora (sin minutos)
+df_h$Hora_hora <- hour(df_h$Hora)
+
+# Creamos la variable Tipo_dia (Laboral / Fin de semana)
+df_h$Dia_semana <- weekdays(df_h$Fecha)
+df_h$Tipo_dia <- ifelse(df_h$Dia_semana %in% c("sábado", "domingo", "Sunday", "Saturday"), "Fin de semana", "Laboral")
+
+# Contamos las compras por hora, y las agrupamos por tipo de día (laboral y fin de semana)
+hora_mas_frecuente <- df_h %>%
+  group_by(Tipo_dia, Hora_hora) %>%
+  summarise(N_compras = n(), .groups = "drop") %>%
+  group_by(Tipo_dia) %>%
+  slice_max(N_compras, n = 1) %>%
+  arrange(Tipo_dia, Hora_hora)
+
+hora_mas_frecuente
 ```
+Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 48 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
 \nolinenumbers
 
@@ -277,8 +296,29 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# 1.Unimos df_p con el Tipo_dia de df_h
+df_prod <- df_p %>%
+  left_join(
+    df_h %>% select(index, Tipo_dia),
+    by = "index"
+  )
 
+# 2.Calculamos la frecuencia medinte Descripcion y Tipo_dia
+top5 <- df_prod %>%
+  group_by(Tipo_dia, Descripcion) %>%
+  summarise(Frecuencia = n(), .groups = "drop") %>%
+  arrange(Tipo_dia, desc(Frecuencia)) %>%
+  group_by(Tipo_dia) %>%
+  slice_head(n = 5) #Para que nos muestre solo los 5 productos más comprados
+
+# 3.Separamos en dos tablas (Laboral y Fin de Semana)
+top5_laboral       <- top5 %>% filter(Tipo_dia == "Laboral")
+top5_fin_de_semana <- top5 %>% filter(Tipo_dia == "Fin de semana")
+
+top5_laboral
+top5_fin_de_semana
 ```
+Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
 
 \nolinenumbers
 
@@ -288,8 +328,44 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+#Agrupamos por ciudad y hacemos un sumarise de num.tickets, maximo, mínimo, media etc. para poder ver como varia el precio según la ciudad
+
+resumen_ciudad <- df_h %>%
+  group_by(Ciudad) %>%
+  summarise(
+    n_tickets    = n(),
+    media_total  = mean(TOTAL_PAGO, na.rm = TRUE),
+    mediana      = median(TOTAL_PAGO, na.rm = TRUE),
+    sd_total     = sd(TOTAL_PAGO, na.rm = TRUE),
+    minimo       = min(TOTAL_PAGO, na.rm = TRUE),
+    maximo       = max(TOTAL_PAGO, na.rm = TRUE)
+  ) %>%
+  arrange(desc(media_total))
+
+resumen_ciudad
+```
+Para verlo de manera más visual, podemos hacaer un diagrama de boxplot, donde la linea central refleja la mediana y los cuartiles la caja.
+
+```{r}
+# Filtramos para quedarnos con ciudades que tengan al menos 5 tickets
+ciudades_muestras <- df_h %>%
+  count(Ciudad) %>%
+  filter(n >= 5) %>%
+  pull(Ciudad)
+
+df_h %>%
+  filter(Ciudad %in% ciudades_muestras) %>%
+  ggplot(aes(x = Ciudad, y = TOTAL_PAGO)) +
+    geom_boxplot() +
+    labs(
+      title = "Distribución del importe total por ciudad (n ≥ 5)",
+      x = "Ciudad", y = "Importe total (€)"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+Como podemos ver en el boxplot Alcoy es la ciudad con más tickets y donde más se gasta en promedio, ciudades como valencia y burjassot tienen una media bastante estable en todas las compras aunque encontramos casos donde hay compras de más de 100€. La elevada media de Alcoy puede deberse a que la mayoría de los tickets son de compras muy altas lo que también podría estar relacionada con los precios en ese Mercadona, mientras en los otros municipios la media se mantiene bastante constante y dentro de rangos más bajos.
 
 \nolinenumbers
 
@@ -299,9 +375,19 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# 1. Hacemos un summarise esta vez sin agrupar por ciudad para saber la media de todas las compras sin importar la ciudad
+resumen_gasto <- df_h %>%
+  summarise(
+    n_compras      = n(),                           
+    gasto_medio    = mean(TOTAL_PAGO, na.rm = TRUE), 
+    gasto_mediana  = median(TOTAL_PAGO, na.rm = TRUE),
+    sd_gasto       = sd(TOTAL_PAGO, na.rm = TRUE)    
+  )
 
+# 2. Mostrar el resultado
+resumen_gasto
 ```
-
+En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€.
 \nolinenumbers
 
 
