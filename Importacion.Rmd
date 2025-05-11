@@ -683,6 +683,18 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 
 -   ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?
 
+Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45). Para ello crearemos una nueva columna.
+
+```{r}
+#Como la hora es un chr, necesitamos a pasarla primero a formato tiempo para comparar
+partes_dia <- df_h %>% mutate(Hora= hm(Hora)) %>% mutate(parte_dia = ifelse(hour(Hora)>= 9 & hour(Hora) <= 13,"mañana", ifelse(hour(Hora)>= 14 & hour(Hora)<= 18, "tarde", "noche")))
+
+partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+```
+Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían.
+
+
+
 -   ¿Cuánto supone económicamente de media el IVA en las compras
 
 -   ¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?
