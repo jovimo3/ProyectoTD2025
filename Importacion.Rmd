@@ -693,11 +693,13 @@ partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(des
 Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
 
 ```{r}
-partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+
+
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
 
 ```
-
-
+Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
 
 
 
