@@ -242,9 +242,14 @@ También hay que considerar que tenemos el doble de observaciones de platano por
 
 \linenumbers
 
-```{r}
+Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencias de los tickets. Para saber las ciudades donde se compra más agruparemos por ciudades i contaremos el numero de casos que hay.
 
+```{r}
+df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 ```
+
+Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
+
 \nolinenumbers
 
 **Pregunta 6  : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?  **
