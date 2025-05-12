@@ -389,6 +389,14 @@ for (i in l_iva){
 }
 ```
 
+Guardamos todos los data frames en carpeta data.
+```{r}
+save(df_p, file = "data/1_df_precios.RData")
+save(df_iva, file = "data/1_df_iva.RData")
+save(df_p, file = "data/1_df_general.RData")
+```
+
+
 ## 4 PREGUNTAS
 
 En la siguietne parte vamos a resolver las siguientes preguntas propuestas por el profesor:
@@ -609,7 +617,7 @@ df_h %>%
   ggplot(aes(x = Ciudad, y = TOTAL_PAGO)) +
     geom_boxplot() +
     labs(
-      title = "Distribución del importe total por ciudad (n ≥ 5)",
+      title = "Distribución del importe total por ciudad (n >= 5)",
       x = "Ciudad", y = "Importe total (€)"
     ) +
     theme_minimal() +
