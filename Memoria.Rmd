@@ -1,12 +1,20 @@
 ---
-title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
-author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
+title: "MEMORIA TRATAMIENTO DE DATOS\newline"
+author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\newline
+  Rocío Bono Moreno y Pau García Pérez."
 date: "2025-05-10"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: '2'
+    df_print: kable
   html_document:
     toc: true
     toc_depth: 2
     toc_float: true
+    df_print: kable
+header-includes:
+  - \usepackage{lineno}
 ---
   
 ```{r setup, include=FALSE} 
@@ -26,6 +34,9 @@ library(stringr)
 library(lubridate)
 library(knitr)
 library(kableExtra)
+
+# Configurar nombres en español para gráficos
+options(OutDec = ",", digits = 2)
 ```
 
 ```{r}
@@ -201,13 +212,19 @@ top5_frutas_verduras
 
 \linenumbers
 
-```{r}
+
+```{r tabla-pesc}
 df_p %>% filter(Tipo == "Pescado") %>% 
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
          arrange(desc(Cantidad)) %>% 
-         head(3) %>% kable()
+         head(5) %>%
+         kable(caption = "Venta Pescado Fruta y Verdura", 
+               booktabs = TRUE,
+               format = "latex") %>%
+         kable_styling(latex_options = c("striped", "hold_position"),position = "center")
 ```
+En la tabla \@ref(tab:tabla-pesc) se puede ver los 5 productos de tipo pescado más vendidos y la cantidad de los mismos en kg.
 
 
 \nolinenumbers
@@ -604,8 +621,10 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 \linenumbers
 
 ```{r}
-
+(sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
 ```
+
+Tenemos que entre todos los tiquets recolectados de media en iva se paga 3.40€.
 
 \nolinenumbers
 
@@ -626,8 +645,17 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 \linenumbers
 
 ```{r}
-
+df_p %>% filter(Tipo != "") %>% 
+          group_by(Tipo) %>% 
+          summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
+          kable(caption = "Venta Pescado Fruta y Verdura \\label{tab:tabla-gastopov}", 
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(latex_options = c("striped", "hold_position"),
+                        position = "center")
 ```
+
+ En la tabla \@ref(tab:tabla-gastopov) se puede apreciar el gasto total en euros, y la cantidad vendidad de ese tipo de producto.
 
 \nolinenumbers
 
