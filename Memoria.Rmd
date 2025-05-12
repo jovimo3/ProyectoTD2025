@@ -24,7 +24,16 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(lubridate)
+library(knitr)
+library(kableExtra)
 ```
+
+```{r}
+load("data/1_df_precios.RData")
+load("data/1_df_iva.RData")
+load("data/1_df_general.RData")
+```
+
 
 \newpage
 
@@ -193,7 +202,11 @@ top5_frutas_verduras
 \linenumbers
 
 ```{r}
-
+df_p %>% filter(Tipo == "Pescado") %>% 
+         group_by(Descripcion) %>% 
+         summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
+         arrange(desc(Cantidad)) %>% 
+         head(3) %>% kable()
 ```
 
 
@@ -203,9 +216,38 @@ top5_frutas_verduras
 
 \linenumbers
 
-```{r}
+Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
 
+```{r}
+library(patchwork)
+#Preparación de datos
+plat_ban <- inner_join(df_p, df_h, by = "index")
+plat_ban <- plat_ban %>% arrange(Fecha)
+
+
+#Banana
+banana <- plat_ban %>% filter(Descripcion == "BANANA") %>% mutate(Fecha = as.factor(Fecha))
+
+#Utilizando table comprobamos que hay dos fechas iguales por tanto eliminaremos una de ellas, ya que el mismo dia cuesta los mismo
+banana <- banana %>% filter(index != 270)
+
+#Para comparar utilizaremos la columna Precio (es la que representa €/kg)
+
+ggbanana <- ggplot(banana, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Banana")
+
+#Platano
+platano <- plat_ban %>% filter(Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
+#Nuevamente tenemos dos casos donde hay compras en la misma fecha. Borramos para dejarnos uno por dia
+
+platano <- platano %>% filter(index != 188 & index != 191 & index != 216 & index != 218)
+ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
+ggplatano + ggbanana
 ```
+
+Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
+
+También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
 
 \nolinenumbers
 
@@ -213,9 +255,14 @@ top5_frutas_verduras
 
 \linenumbers
 
-```{r}
+Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencias de los tickets. Para saber las ciudades donde se compra más agruparemos por ciudades i contaremos el numero de casos que hay.
 
+```{r}
+df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 ```
+
+Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
+
 \nolinenumbers
 
 **Pregunta 6  : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?  **
@@ -490,31 +537,64 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 
 \linenumbers
 
+Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45).
+
 ```{r}
+partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13,"mañana", ifelse(Hora_hora>= 14 & Hora_hora<= 18, "tarde", "noche")))
+
+partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+```
+
+Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
+
+```{r}
+partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+
+
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
 
 ```
+
+Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
 
 \nolinenumbers
 
 
-**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (21 de junio - 22 de septiempre),  invierno(21 diciembre - 20 marzo)... ? (representación gráfica) **
+**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - febrero)... ?  **
 
 \linenumbers
+Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
 
 ```{r}
+estaciones <- df_h %>% mutate(estacion = ifelse(month(Fecha) >= 3 & month(Fecha) <=5, "primavera", ifelse(month(Fecha)>=6 & month(Fecha)<= 8, "verano", ifelse(month(Fecha)>=9 & month(Fecha)<=11, "otoño", "invierno")))) %>% inner_join(df_p, by = "index")
+
+
+top_5 <- estaciones %>% group_by(estacion, Descripcion) %>% summarise(Frecuencia = n(), .groups = "drop") %>% arrange(desc(Frecuencia)) %>% filter(Descripcion !="BOLSA PLASTICO")
+#invierno
+top_5 %>% filter(estacion == "invierno") %>% head(5)
+#primavera
+top_5 %>% filter(estacion == "primavera") %>% head(5)
+#verano
+top_5 %>% filter(estacion == "verano") %>% head(5)
+#otoño
+top_5 %>% filter(estacion == "otoño") %>% head(5)
+
 
 ```
+Una de las cosas destacables ya ha sido comentado previamente en una de las preguntas, ya que en invierno y en otoño se puede ver que el platano es el producto más comprado cuando luego en la tabla de verano y primavera no aparece y en su defecto aparece la Banana. Esto es debido a que durante las estaciones de primavera y verano el precio del platano es mucho más superior al estar fuera de temporada. Igualmente con otras frutas que salen en el top únicamente en una estación o en dos, podríamos atribuir este hecho a que cada fruta tiene una temporada.
 
 \nolinenumbers
 
 
-**Pregunta 17 : ¿En que estación se compra más?¿Por que crees que és?**
+**Pregunta 17 : ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra? **
 
 \linenumbers
 
 ```{r}
-
+cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
+cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
 ```
+Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados  ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
 
 \nolinenumbers
 
