@@ -66,8 +66,8 @@ dir <- "data/"
 pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)
 
 #Eliminamos aquellos que contengan O╠é ya que no nos sirven(repetidos)
-pdfs <- pdfs[!str_detect(pdfs,pattern = "O╠é")] %>% lapply(pdf_text)
-
+#pdfs <- pdfs[!str_detect(pdfs,pattern = "O╠é")] %>% lapply(pdf_text)
+pdfs <- pdfs[!str_detect(pdfs,pattern = "O.ée.ü..")] %>% lapply(pdf_text)
 
 ```
 
@@ -446,8 +446,7 @@ df_p %>% filter(Tipo == "Pescado") %>%
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
          arrange(desc(Cantidad)) %>% 
-         head(3) %>% 
-         kable()
+         head(3) %>% kable()
 
 ```
 
