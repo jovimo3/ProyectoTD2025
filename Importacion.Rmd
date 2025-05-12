@@ -23,6 +23,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(lubridate)
+library(knitr)
 ```
 
 **Mini Proyecto de Análisis Exploratorio de Datos:**
@@ -382,8 +383,8 @@ for (i in l_iva){
     df_iva <- rbind(df_iva,data.frame(
                          index = a,
                          IVA = iva[1],
-                         BASE = iva[2],
-                         CUOTA = iva[3]
+                         BASE = as.numeric(iva[2]%>% sub(",",".",.)),
+                         CUOTA = as.numeric(iva[3] %>% sub(",",".",.))
   ))
   }
 }
@@ -444,7 +445,9 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 df_p %>% filter(Tipo == "Pescado") %>% 
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
-         arrange(desc(Cantidad))
+         arrange(desc(Cantidad)) %>% 
+         head(3) %>% 
+         kable()
 
 ```
 
@@ -748,6 +751,10 @@ Se confirma lo que pensabamos se va más por la mañana en el fin de semana en c
 
 -   ¿Cuánto supone económicamente de media el IVA en las compras
 
+    ```{r}
+    (sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+    ```
+
 -   ¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?
 
 -   ¿Que productos son los más comprados durante el invierno(21 diciembre - 20 marzo)?
@@ -782,6 +789,13 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
 Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
 
 -   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
+
+    ```{r}
+    df_p %>% filter(Tipo != "") %>% 
+             group_by(Tipo) %>% 
+             summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
+             kable()
+    ```
 
 -   ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
 
