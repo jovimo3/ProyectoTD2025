@@ -23,6 +23,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(lubridate)
+library(knitr)
 ```
 
 **Mini Proyecto de Análisis Exploratorio de Datos:**
@@ -64,9 +65,8 @@ dir <- "data/"
 # Cargamos todos los pdf de la carpeta data
 pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)
 
-#Eliminamos aquellos que contengan O╠é ya que no nos sirven(repetidos)
-pdfs <- pdfs[!str_detect(pdfs,pattern = "O╠é")] %>% lapply(pdf_text)
-
+#Eliminamos aquellos que contengan "O.ée.ü.." ya que no nos sirven(repetidos)
+pdfs <- pdfs[!str_detect(pdfs,pattern = "O.ée.ü..")] %>% lapply(pdf_text)
 
 ```
 
@@ -382,8 +382,8 @@ for (i in l_iva){
     df_iva <- rbind(df_iva,data.frame(
                          index = a,
                          IVA = iva[1],
-                         BASE = iva[2],
-                         CUOTA = iva[3]
+                         BASE = as.numeric(iva[2]%>% sub(",",".",.)),
+                         CUOTA = as.numeric(iva[3] %>% sub(",",".",.))
   ))
   }
 }
@@ -444,7 +444,8 @@ Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras
 df_p %>% filter(Tipo == "Pescado") %>% 
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
-         arrange(desc(Cantidad))
+         arrange(desc(Cantidad)) %>% 
+         head(3) %>% kable()
 
 ```
 
@@ -724,7 +725,7 @@ media_productos
 
 La cantidad media de productos por ticket es de 18.80198 productos.
 
--   ¿Cuando se hacen más compras en las diferentes partes del día: mañana, tarde y noche?
+-   ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?
 
 Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45). Para ello crearemos una nueva columna.
 
@@ -748,38 +749,13 @@ Se confirma lo que pensabamos se va más por la mañana en el fin de semana en c
 
 -   ¿Cuánto supone económicamente de media el IVA en las compras
 
--   ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - marzo)... ? (representación gráfica) 
+    ```{r}
+    (sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+    ```
 
-Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
+-   ¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?
 
-```{r}
-estaciones <- df_h %>% mutate(estacion = ifelse(month(Fecha) >= 3 & month(Fecha) <=5, "primavera", ifelse(month(Fecha)>=6 & month(Fecha)<= 8, "verano", ifelse(month(Fecha)>=9 & month(Fecha)<=11, "otoño", "invierno")))) %>% inner_join(df_p, by = "index")
-
-
-top_5 <- estaciones %>% group_by(estacion, Descripcion) %>% summarise(Frecuencia = n(), .groups = "drop") %>% arrange(desc(Frecuencia)) %>% filter(Descripcion !="BOLSA PLASTICO")
-#invierno
-top_5 %>% filter(estacion == "invierno") %>% head(5)
-#primavera
-top_5 %>% filter(estacion == "primavera") %>% head(5)
-#verano
-top_5 %>% filter(estacion == "verano") %>% head(5)
-#otoño
-top_5 %>% filter(estacion == "otoño") %>% head(5)
-
-
-```
-Una de las cosas destacables ya ha sido comentado previamente en una de las preguntas, ya que en invierno y en otoño se puede ver que el platano es el producto más comprado cuando luego en la tabla de verano y primavera no aparece y en su defecto aparece la Banana. Esto es debido a que durante las estaciones de primavera y verano el precio del platano es mucho más superior al estar fuera de temporada. Igualmente con otras frutas que salen en el top únicamente en una estación o en dos, podríamos atribuir este hecho a que cada fruta tiene una temporada.
-
-
--   ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra? 
-
-```{r}
-
-cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
-cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
-```
-Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados  ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
-
+-   ¿Que productos son los más comprados durante el invierno(21 diciembre - 20 marzo)?
 
 -   ¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo, haz una gráfica para apreciarlo mejor?
 
@@ -811,6 +787,13 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
 Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
 
 -   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
+
+    ```{r}
+    df_p %>% filter(Tipo != "") %>% 
+             group_by(Tipo) %>% 
+             summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
+             kable()
+    ```
 
 -   ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
 
