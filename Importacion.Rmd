@@ -65,8 +65,7 @@ dir <- "data/"
 # Cargamos todos los pdf de la carpeta data
 pdfs <- list.files(path = dir, pattern = "\\.pdf$", full.names = TRUE)
 
-#Eliminamos aquellos que contengan O╠é ya que no nos sirven(repetidos)
-#pdfs <- pdfs[!str_detect(pdfs,pattern = "O╠é")] %>% lapply(pdf_text)
+#Eliminamos aquellos que contengan "O.ée.ü.." ya que no nos sirven(repetidos)
 pdfs <- pdfs[!str_detect(pdfs,pattern = "O.ée.ü..")] %>% lapply(pdf_text)
 
 ```
