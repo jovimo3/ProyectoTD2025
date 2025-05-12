@@ -486,7 +486,7 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 \nolinenumbers
 
 
-**Pregunta 15 : ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?  **
+**Pregunta 15 : ¿Cuando se hacen más compras en las diferentes partes del día: mañana, tarde y noche?  **
 
 \linenumbers
 
