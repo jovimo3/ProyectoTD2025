@@ -1,24 +1,13 @@
 ---
-  title: "MEMORIA TRATAMIENTO DE DATOS \\newline "
+title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
 author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
 date: "2025-05-10"
 output:
-  pdf_document:
-  latex_engine: xelatex
-toc: yes
-toc_depth: 4
-number_sections: no
-fig_caption: yes
-html_document:
-  toc: yes
-toc_depth: 3
-df_print: paged
-header-includes:
-  - \usepackage[labelfont=bf,justification=raggedright,singlelinecheck=false]{caption}
-- \usepackage{lineno}
-
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
 ---
-  
   
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FALSE)
@@ -43,21 +32,32 @@ library(lubridate)
 
 # Introducción
 
+# Contexto del proyecto
+
 \linenumbers
-texto
+En la actualidad donde la información ha pasado a ser uno de los elementos más preciados, el análisis de datos juega un papel muy importante tanto en la toma de decisiones estratégicas como operativas. La gran cantidad de datos ha impulsado la necesidad de convertir estos mismos en conocimientos aplicables, lo que convierte el análisis exploratorio en una herramienta esencial en múltiples sectores.
+
+Como futuros científicos de datos, nuestro trabajo consistirá en extraer la información más relevante de una gran cantidad de datos. En este proyecto, los tickets representaran nuestra fuente de datos, donde mediante estos, podremos descubrir: preferencias, hábitos y comportamientos de los consumidores. A través de ellos, también podemos interpretar patrones ocultos, prever necesidades futuras y generar estrategias que optimicen tanto la experiencia del cliente como la gestión empresarial.
+
+Analizando los registros de venta recogidos en los tickets, es posible obtener conclusiones relevantes para áreas como el control de inventario, el diseño de promociones o la personalización de servicios. Esto no solo mejora la eficiencia interna, sino que permite responder de forma ágil y efectiva a las demandas del mercado.
 
 \nolinenumbers
 ## Nuestro Proyecto
 
 \linenumbers
-texto
+Este proyecto nace con la necesidad de convertir datos sin procesar - provenientes de tickets de Mercadona- en información valiosa mediante técnicas de limpieza, transformación y análisis exploratorio. A través de una serie de scripts en R, hemos diseñado un modelo de trabajo que permite capturar los aspectos más relevantes del consumo cotidiano, con el objetivo de ofrecer herramientas útiles para la toma de decisiones comerciales.
+
+
+La metodología utilizada combina la programación en R con recursos de visualización y manipulación de datos. Nuestro trabajo no se limita en organizar los datos, sino que busca identificar correlaciones, tendencias y patrones de comportamiento. A través de este proceso, contribuimos al entendimiento de dinámicas reales del mercado y fomentamos un entorno donde el dato procesado se convierte en una ventaja competitiva.
 
 \nolinenumbers
 ## Recursos utilizados y estructura de trabajo
 
 \linenumbers
 
-texto
+Para llevar a cabo este análisis, hemos empleado librerías fundamentales de R como readr, dplyr, stringr, tibble y ggplot2, entre otras. Estas herramientas nos han permitido estructurar los datos de manera eficiente, realizar filtrados específicos, transformar cadenas de texto y crear visualizaciones útiles.
+
+El proceso inicial incluyó la conversión de los archivos PDF a texto plano mediante el uso de las funciones de la librería pdftools. Luego, se procedió a extraer la información de interés, organizándola en dataframes preparados para su análisis posterior. Una parte esencial fue la limpieza de los datos: corregir errores, homogeneizar formatos y validar los campos esenciales para obtener un dataset sólido y confiable.
 
 \nolinenumbers
 ## Variables y estruturas de los datos
@@ -65,7 +65,7 @@ texto
 \linenumbers
 
 
-texto
+En esta primera fase, trabajamos con un conjunto de diferentes variables , que abarcan tanto información general del ticket (fecha, hora, importe total, tienda, caja, número de ticket) como detalles específicos de los productos adquiridos (nombre del producto, cantidad, precio unitario, tipo de producto, peso o unidad, entre otros).
 \newpage
 
 \nolinenumbers
@@ -203,9 +203,38 @@ top5_frutas_verduras
 
 \linenumbers
 
-```{r}
+Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
 
+```{r}
+library(patchwork)
+#Preparación de datos
+plat_ban <- inner_join(df_p, df_h, by = "index")
+plat_ban <- plat_ban %>% arrange(Fecha)
+
+
+#Banana
+banana <- plat_ban %>% filter(Descripcion == "BANANA") %>% mutate(Fecha = as.factor(Fecha))
+
+#Utilizando table comprobamos que hay dos fechas iguales por tanto eliminaremos una de ellas, ya que el mismo dia cuesta los mismo
+banana <- banana %>% filter(index != 270)
+
+#Para comparar utilizaremos la columna Precio (es la que representa €/kg)
+
+ggbanana <- ggplot(banana, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Banana")
+
+#Platano
+platano <- plat_ban %>% filter(Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
+#Nuevamente tenemos dos casos donde hay compras en la misma fecha. Borramos para dejarnos uno por dia
+
+platano <- platano %>% filter(index != 188 & index != 191 & index != 216 & index != 218)
+ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
+ggplatano + ggbanana
 ```
+
+Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
+
+También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
 
 \nolinenumbers
 
@@ -213,9 +242,14 @@ top5_frutas_verduras
 
 \linenumbers
 
-```{r}
+Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencias de los tickets. Para saber las ciudades donde se compra más agruparemos por ciudades i contaremos el numero de casos que hay.
 
+```{r}
+df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 ```
+
+Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
+
 \nolinenumbers
 
 **Pregunta 6  : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?  **
@@ -254,8 +288,27 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# Primero nos aseguramos de que 'Hora' esté en formato adecuado
+df_h$Hora <- as.POSIXct(df_h$Hora, format = "%H:%M", tz = "UTC")
 
+# Luego extraemos la hora (sin minutos)
+df_h$Hora_hora <- hour(df_h$Hora)
+
+# Creamos la variable Tipo_dia (Laboral / Fin de semana)
+df_h$Dia_semana <- weekdays(df_h$Fecha)
+df_h$Tipo_dia <- ifelse(df_h$Dia_semana %in% c("sábado", "domingo", "Sunday", "Saturday"), "Fin de semana", "Laboral")
+
+# Contamos las compras por hora, y las agrupamos por tipo de día (laboral y fin de semana)
+hora_mas_frecuente <- df_h %>%
+  group_by(Tipo_dia, Hora_hora) %>%
+  summarise(N_compras = n(), .groups = "drop") %>%
+  group_by(Tipo_dia) %>%
+  slice_max(N_compras, n = 1) %>%
+  arrange(Tipo_dia, Hora_hora)
+
+hora_mas_frecuente
 ```
+Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 48 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
 \nolinenumbers
 
@@ -265,8 +318,29 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# 1.Unimos df_p con el Tipo_dia de df_h
+df_prod <- df_p %>%
+  left_join(
+    df_h %>% select(index, Tipo_dia),
+    by = "index"
+  )
 
+# 2.Calculamos la frecuencia medinte Descripcion y Tipo_dia
+top5 <- df_prod %>%
+  group_by(Tipo_dia, Descripcion) %>%
+  summarise(Frecuencia = n(), .groups = "drop") %>%
+  arrange(Tipo_dia, desc(Frecuencia)) %>%
+  group_by(Tipo_dia) %>%
+  slice_head(n = 5) #Para que nos muestre solo los 5 productos más comprados
+
+# 3.Separamos en dos tablas (Laboral y Fin de Semana)
+top5_laboral       <- top5 %>% filter(Tipo_dia == "Laboral")
+top5_fin_de_semana <- top5 %>% filter(Tipo_dia == "Fin de semana")
+
+top5_laboral
+top5_fin_de_semana
 ```
+Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
 
 \nolinenumbers
 
@@ -276,8 +350,44 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+#Agrupamos por ciudad y hacemos un sumarise de num.tickets, maximo, mínimo, media etc. para poder ver como varia el precio según la ciudad
+
+resumen_ciudad <- df_h %>%
+  group_by(Ciudad) %>%
+  summarise(
+    n_tickets    = n(),
+    media_total  = mean(TOTAL_PAGO, na.rm = TRUE),
+    mediana      = median(TOTAL_PAGO, na.rm = TRUE),
+    sd_total     = sd(TOTAL_PAGO, na.rm = TRUE),
+    minimo       = min(TOTAL_PAGO, na.rm = TRUE),
+    maximo       = max(TOTAL_PAGO, na.rm = TRUE)
+  ) %>%
+  arrange(desc(media_total))
+
+resumen_ciudad
+```
+Para verlo de manera más visual, podemos hacaer un diagrama de boxplot, donde la linea central refleja la mediana y los cuartiles la caja.
+
+```{r}
+# Filtramos para quedarnos con ciudades que tengan al menos 5 tickets
+ciudades_muestras <- df_h %>%
+  count(Ciudad) %>%
+  filter(n >= 5) %>%
+  pull(Ciudad)
+
+df_h %>%
+  filter(Ciudad %in% ciudades_muestras) %>%
+  ggplot(aes(x = Ciudad, y = TOTAL_PAGO)) +
+    geom_boxplot() +
+    labs(
+      title = "Distribución del importe total por ciudad (n ≥ 5)",
+      x = "Ciudad", y = "Importe total (€)"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+Como podemos ver en el boxplot Alcoy es la ciudad con más tickets y donde más se gasta en promedio, ciudades como valencia y burjassot tienen una media bastante estable en todas las compras aunque encontramos casos donde hay compras de más de 100€. La elevada media de Alcoy puede deberse a que la mayoría de los tickets son de compras muy altas lo que también podría estar relacionada con los precios en ese Mercadona, mientras en los otros municipios la media se mantiene bastante constante y dentro de rangos más bajos.
 
 \nolinenumbers
 
@@ -287,9 +397,19 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 \linenumbers
 
 ```{r}
+# 1. Hacemos un summarise esta vez sin agrupar por ciudad para saber la media de todas las compras sin importar la ciudad
+resumen_gasto <- df_h %>%
+  summarise(
+    n_compras      = n(),                           
+    gasto_medio    = mean(TOTAL_PAGO, na.rm = TRUE), 
+    gasto_mediana  = median(TOTAL_PAGO, na.rm = TRUE),
+    sd_gasto       = sd(TOTAL_PAGO, na.rm = TRUE)    
+  )
 
+# 2. Mostrar el resultado
+resumen_gasto
 ```
-
+En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€.
 \nolinenumbers
 
 
@@ -400,35 +520,68 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 \nolinenumbers
 
 
-**Pregunta 15 : ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?  **
+**Pregunta 15 : ¿Cuando se hacen más compras en las diferentes partes del día: mañana, tarde y noche?  **
 
 \linenumbers
 
+Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45).
+
 ```{r}
+partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13,"mañana", ifelse(Hora_hora>= 14 & Hora_hora<= 18, "tarde", "noche")))
+
+partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+```
+
+Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
+
+```{r}
+partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+
+
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
 
 ```
+
+Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
 
 \nolinenumbers
 
 
-**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (21 de junio - 22 de septiempre),  invierno(21 diciembre - 20 marzo)... ? (representación gráfica) **
+**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - febrero)... ?  **
 
 \linenumbers
+Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
 
 ```{r}
+estaciones <- df_h %>% mutate(estacion = ifelse(month(Fecha) >= 3 & month(Fecha) <=5, "primavera", ifelse(month(Fecha)>=6 & month(Fecha)<= 8, "verano", ifelse(month(Fecha)>=9 & month(Fecha)<=11, "otoño", "invierno")))) %>% inner_join(df_p, by = "index")
+
+
+top_5 <- estaciones %>% group_by(estacion, Descripcion) %>% summarise(Frecuencia = n(), .groups = "drop") %>% arrange(desc(Frecuencia)) %>% filter(Descripcion !="BOLSA PLASTICO")
+#invierno
+top_5 %>% filter(estacion == "invierno") %>% head(5)
+#primavera
+top_5 %>% filter(estacion == "primavera") %>% head(5)
+#verano
+top_5 %>% filter(estacion == "verano") %>% head(5)
+#otoño
+top_5 %>% filter(estacion == "otoño") %>% head(5)
+
 
 ```
+Una de las cosas destacables ya ha sido comentado previamente en una de las preguntas, ya que en invierno y en otoño se puede ver que el platano es el producto más comprado cuando luego en la tabla de verano y primavera no aparece y en su defecto aparece la Banana. Esto es debido a que durante las estaciones de primavera y verano el precio del platano es mucho más superior al estar fuera de temporada. Igualmente con otras frutas que salen en el top únicamente en una estación o en dos, podríamos atribuir este hecho a que cada fruta tiene una temporada.
 
 \nolinenumbers
 
 
-**Pregunta 17 : ¿En que estación se compra más?¿Por que crees que és?**
+**Pregunta 17 : ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra? **
 
 \linenumbers
 
 ```{r}
-
+cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
+cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
 ```
+Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados  ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
 
 \nolinenumbers
 
