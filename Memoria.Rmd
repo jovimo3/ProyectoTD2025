@@ -497,7 +497,7 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 \nolinenumbers
 
 
-**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (21 de junio - 22 de septiempre),  invierno(21 diciembre - 20 marzo)... ? (representación gráfica) **
+**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - febrero)... ?  **
 
 \linenumbers
 
