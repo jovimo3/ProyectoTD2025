@@ -508,7 +508,7 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 \nolinenumbers
 
 
-**Pregunta 17 : ¿En que estación se compra más?¿Por que crees que és?**
+**Pregunta 17 : ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra? **
 
 \linenumbers
 
