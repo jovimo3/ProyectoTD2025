@@ -24,6 +24,7 @@ library(ggplot2)
 library(stringr)
 library(lubridate)
 ```
+
 **Mini Proyecto de Análisis Exploratorio de Datos:**
 
 **Participantes:** Josep Vicent Morales Martorell, Rocio Bono Moreno, Laura Horjales Rivas, Arnau Hernández Lucas y Pau García Pérez.
@@ -42,7 +43,6 @@ Analizando los registros de venta recogidos en los tickets, es posible obtener c
 
 Este proyecto nace con la necesidad de convertir datos sin procesar - provenientes de tickets de Mercadona- en información valiosa mediante técnicas de limpieza, transformación y análisis exploratorio. A través de una serie de scripts en R, hemos diseñado un modelo de trabajo que permite capturar los aspectos más relevantes del consumo cotidiano, con el objetivo de ofrecer herramientas útiles para la toma de decisiones comerciales.
 
-
 La metodología utilizada combina la programación en R con recursos de visualización y manipulación de datos. Nuestro trabajo no se limita en organizar los datos, sino que busca identificar correlaciones, tendencias y patrones de comportamiento. A través de este proceso, contribuimos al entendimiento de dinámicas reales del mercado y fomentamos un entorno donde el dato procesado se convierte en una ventaja competitiva.
 
 **RECURSOS UTILIZADOS Y ESTRUCTURA DE TRABAJO**
@@ -54,7 +54,6 @@ El proceso inicial incluyó la conversión de los archivos PDF a texto plano med
 **VARIABLES Y ESTRUCTURA DE LOS DATOS**
 
 En esta primera fase, trabajamos con un conjunto de diferentes variables , que abarcan tanto información general del ticket (fecha, hora, importe total, tienda, caja, número de ticket) como detalles específicos de los productos adquiridos (nombre del producto, cantidad, precio unitario, tipo de producto, peso o unidad, entre otros).
-
 
 ## 2. Carga Pdfs
 
@@ -208,7 +207,7 @@ for(i in l_compras){
 
 ```
 
-Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1, ya que es el mismo valor. 
+Estos datos presentan algunos problemas, entre ellos, los decimales estan separados por "," en vez de por ".", y a su vez, las tablas no estan llenas de datos, ya que algunos datos del Importe salen desplazados a la columna de Precio debido a que esta está vacía cuando la cantidad de unidades es 1, ya que es el mismo valor.
 
 Por tanto, en el siguiente bloque arreglaremos estos 2 problemas.
 
@@ -394,7 +393,8 @@ for (i in l_iva){
 
 En la siguietne parte vamos a resolver las siguientes preguntas propuestas por el profesor:
 
--   ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?-   ¿Cuántas unidades de cada uno se han vendido ?
+-   ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas ?- ¿Cuántas unidades de cada uno se han vendido ?
+
 ```{r}
 # Primero Filtramos solo los productos vendidos por unidades, es decir, los que no son ni fruta,verdura y pescado(!Tipo == "Fruta o Verdura" o "Pescado")
 df_unidades <- df_p %>%
@@ -412,12 +412,11 @@ top_5_productos <- head(productos_ventas, 5)
 
 top_5_productos
 ```
+
 Como podemos observar los 5 productos más vendidos por unidades son: el atún claro oliva(62 unidades), queso lonchas cabra( 53 unidades), bolsa plástico (51 unidades), leche desnatada de calcio (49 unidades) y por último yogur coco (40 unidades), esto muestra una gran tendencia hacia los lácteos ya que 3 de estos 5 productos son lácteos.
 
-
-
-
 -   Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
+
 ```{r}
 # Filtramos los productos que entren en la categoría "Frutas y Verduras".
 df_frutas_verduras <- df_p %>%
@@ -435,10 +434,19 @@ top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
 
 top5_frutas_verduras
 ```
-Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras son: el plátano (vendiendo un total de 62.868 kg), la banana 
-(vendiendo 28.140 kg), la sandia baja semillas (22.843 kg), pepino (19.624 kg) y el calabacín verde (17.754 kg). 
+
+Como se observa en esta tabla los 5 productos más vendidos de frutas o verduras son: el plátano (vendiendo un total de 62.868 kg), la banana (vendiendo 28.140 kg), la sandia baja semillas (22.843 kg), pepino (19.624 kg) y el calabacín verde (17.754 kg).
 
 -   Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos ?
+
+```{r}
+
+df_p %>% filter(Tipo == "Pescado") %>% 
+         group_by(Descripcion) %>% 
+         summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
+         arrange(desc(Cantidad))
+
+```
 
 -   Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
@@ -470,11 +478,10 @@ ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + g
   theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
 ggplatano + ggbanana
 ```
-Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio. 
+
+Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
 
 También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
-
-
 
 -   ¿ Cuál es la procedencia de los tickets ?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ?
 
@@ -483,9 +490,8 @@ Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencia
 ```{r}
 df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 ```
+
 Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
-
-
 
 -   Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías ?
 
@@ -510,9 +516,6 @@ df_h %>%
 ```
 
 Según el diagrama el día entre semana con menos tickets y por lo tanto ventas, es el jueves. Por lo que lo más inteligente sería cerrar este día, ya que es cuando menos gente va a Mercadona.
-
-
-
 
 También se responderan a las siguientes preguntas propuestas por nuestro equipo:
 
@@ -539,6 +542,7 @@ hora_mas_frecuente <- df_h %>%
 
 hora_mas_frecuente
 ```
+
 Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 48 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
 -   ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?
@@ -569,7 +573,6 @@ top5_fin_de_semana
 
 Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
 
-
 -   ¿El precio total de la compra varían según la ciudad o zona?
 
 ```{r}
@@ -590,6 +593,7 @@ resumen_ciudad <- df_h %>%
 resumen_ciudad
 
 ```
+
 Para verlo de manera más visual, podemos hacaer un diagrama de boxplot, donde la linea central refleja la mediana y los cuartiles la caja
 
 ```{r}
@@ -611,8 +615,8 @@ df_h %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
-Como podemos ver en el boxplot Alcoy es la ciudad con más tickets y donde más se gasta en promedio, ciudades como valencia y burjassot tienen una media bastante estable en todas las compras aunque encontramos casos donde hay compras de más de 100€. La elevada media de Alcoy puede deberse a que la mayoría de los tickets son de compras muy altas lo que también podría estar relacionada con los precios en ese Mercadona, mientras en los otros municipios la media se mantiene bastante constante y dentro de rangos más bajos.
 
+Como podemos ver en el boxplot Alcoy es la ciudad con más tickets y donde más se gasta en promedio, ciudades como valencia y burjassot tienen una media bastante estable en todas las compras aunque encontramos casos donde hay compras de más de 100€. La elevada media de Alcoy puede deberse a que la mayoría de los tickets son de compras muy altas lo que también podría estar relacionada con los precios en ese Mercadona, mientras en los otros municipios la media se mantiene bastante constante y dentro de rangos más bajos.
 
 -   ¿Cuánto dinero de media se gasta cada cliente en una compra?
 
@@ -629,9 +633,11 @@ resumen_gasto <- df_h %>%
 # 2. Mostrar el resultado
 resumen_gasto
 ```
+
 En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€.
 
 -   ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?
+
 ```{r}
 library(lubridate)
 
@@ -659,10 +665,11 @@ ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) 
 #Usamos stat = "identity" para indicar que ya dimos los valores y position="dodge" para tener en el mismo mes varias barras en el caso de tener tickets de varios. años.
 
 ```
+
 Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos es diciembre. Fijandonos en el año 2024 (verde), el período con más gastos es en enero (siendo el único año con tickets todos los meses). En el año 2025 (azul) es febrero el mes con más gastos. Por lo que el período con más gastos no es en la época de Navidad.
 
-
 -   ¿Qué productos suelen comprarse juntos?
+
 ```{r}
 library(dplyr)
 
@@ -681,9 +688,11 @@ coocurrencias <- df_limpio %>%
 
 head(coocurrencias, 10)
 ```
+
 Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva".
 
 -   ¿Cuál es el producto más caro registrado en los tickets?
+
 ```{r}
 df_p$Importe <- as.numeric(df_p$Importe)
 
@@ -695,9 +704,11 @@ producto_mas_caro <- df_p %>%
 
 producto_mas_caro
 ```
+
 El producto más caro registrado es el "alistado mediano", que tiene un precio de 31.33 euros.
 
 -   ¿Hay una cantidad media de productos por tickets?
+
 ```{r}
 df_p$Cantidad <- as.numeric(df_p$Cantidad)
 
@@ -710,7 +721,8 @@ media_productos <- mean(productos_por_ticket$Total_Productos)
 
 media_productos
 ```
-La cantidad media de productos por ticket es de 18.80198 productos. 
+
+La cantidad media de productos por ticket es de 18.80198 productos.
 
 -   ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?
 
@@ -721,6 +733,7 @@ partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13
 
 partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
 ```
+
 Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
 
 ```{r}
@@ -730,9 +743,8 @@ partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n
 ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
 
 ```
+
 Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
-
-
 
 -   ¿Cuánto supone económicamente de media el IVA en las compras
 
@@ -767,9 +779,7 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
   ) 
 ```
 
-Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados. 
-
-
+Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
 
 -   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
 
@@ -801,9 +811,6 @@ Como se ve en el dataframe, cuando no se utiliza el parking, el número de produ
 
 Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
 
-
-
-
 -   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?
 
 ```{r}
@@ -825,5 +832,3 @@ tiempo_medio
 ```
 
 El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
-
-
