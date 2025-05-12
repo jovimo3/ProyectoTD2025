@@ -524,9 +524,25 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 
 \linenumbers
 
+Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45).
+
 ```{r}
+partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13,"mañana", ifelse(Hora_hora>= 14 & Hora_hora<= 18, "tarde", "noche")))
+
+partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+```
+
+Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
+
+```{r}
+partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+
+
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
 
 ```
+
+Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
 
 \nolinenumbers
 
