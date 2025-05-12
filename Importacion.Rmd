@@ -3,9 +3,14 @@ title: "Importacion"
 author: "Morales Martorell, Josep Vicent, Rocio Bono Moreno, Laura Horjales Rivas, Arnau Hernández Lucas y Pau García Pérez."
 date: "2025-04-03"
 output:
-  bookdown::pdf_document2: default
+  bookdown::pdf_document2:
+    fig_caption: yes
+    df_print: kable
+    keep_tex: true
   bookdown::html_document2:
-    df_print: paged
+    fig_caption: yes
+    df_print: kable
+    keep_tex: true
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Conjunto de librerías a utilizar:
 
 ```{r results='hide'}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(pdftools)
 library(tidyr)
 library(dplyr)
@@ -24,6 +30,10 @@ library(ggplot2)
 library(stringr)
 library(lubridate)
 library(knitr)
+library(kableExtra)
+
+# Configurar nombres en español para gráficos
+options(OutDec = ",", digits = 2)
 ```
 
 **Mini Proyecto de Análisis Exploratorio de Datos:**
@@ -389,7 +399,7 @@ for (i in l_iva){
 }
 ```
 
-Guardamos todos los data frames en carpeta data.
+Guardamos todos los data frames en carpeta data
 ```{r}
 save(df_p, file = "data/1_df_precios.RData")
 save(df_iva, file = "data/1_df_iva.RData")
@@ -825,20 +835,30 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
   ) 
 ```
 
-Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
+    Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
 
--   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
+-  ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
 
-    ```{r}
-    df_p %>% filter(Tipo != "") %>% 
-             group_by(Tipo) %>% 
-             summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
-             kable()
-    ```
+    En la tabla \@ref(tab:tabla-gastopov) se puede apreciar el gasto total en euros, y la cantidad vendidad de ese tipo de producto.
 
--   ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
+```{r }
 
-```{r}
+df_p %>% filter(Tipo != "") %>% 
+          group_by(Tipo) %>% 
+          summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
+          kable(caption = "Venta Pescado Fruta y Verdura \\label{tab:tabla-gastopov}", 
+          booktabs = TRUE,
+          format = "latex") %>%
+kable_styling(
+    latex_options = c("striped", "hold_position"),
+    position = "center"
+  )
+```
+    
+
+-  ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
+
+```{r }
 # Crear df_parking con la información del uso del parking
 df_parking <- df_h %>%
   select(index, PARKING_ENTRADA) %>%
@@ -860,9 +880,9 @@ usado_parking_df
 
 ```
 
-Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
+    Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
 
-Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
+    Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
 
 -   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?
 
@@ -881,7 +901,16 @@ df_parking_tiempos <- df_h %>%
 
 # Calcular el tiempo medio
 tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
-tiempo_medio
+
+df_parking_tiempos |>
+  mutate(indice = row_number()) |>
+  arrange(tiempo_diferencia) |>
+  mutate(orden = row_number()) |>
+  ggplot(aes(x = orden, y = tiempo_diferencia)) +
+  geom_point() +
+  labs(title = "Distribución Tiempo Compra Segun Tiempo Parking", 
+       x = "Índice ordenado", y = "Tiempo (min)")
+
 ```
 
-El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
+    El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
