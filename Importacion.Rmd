@@ -472,30 +472,12 @@ df_p %>% filter(Tipo == "Pescado") %>%
 Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
 
 ```{r}
-library(patchwork)
 #Preparación de datos
 plat_ban <- inner_join(df_p, df_h, by = "index")
-plat_ban <- plat_ban %>% arrange(Fecha)
+plat_ban <- plat_ban %>% arrange(Fecha) %>% filter(Descripcion == "BANANA" | Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
 
-
-#Banana
-banana <- plat_ban %>% filter(Descripcion == "BANANA") %>% mutate(Fecha = as.factor(Fecha))
-
-#Utilizando table comprobamos que hay dos fechas iguales por tanto eliminaremos una de ellas, ya que el mismo dia cuesta los mismo
-banana <- banana %>% filter(index != 270)
-
-#Para comparar utilizaremos la columna Precio (es la que representa €/kg)
-
-ggbanana <- ggplot(banana, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Banana")
-
-#Platano
-platano <- plat_ban %>% filter(Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
-#Nuevamente tenemos dos casos donde hay compras en la misma fecha. Borramos para dejarnos uno por dia
-
-platano <- platano %>% filter(index != 188 & index != 191 & index != 216 & index != 218)
-ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
-ggplatano + ggbanana
+#Para comparar utilizaremos la columna Precio (es la que representa €/kg), tambien usamos jitter por si un mismo dia tiene diferentes compras
+ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion))
 ```
 
 Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
