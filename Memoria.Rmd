@@ -1,20 +1,16 @@
 ---
-title: "MEMORIA TRATAMIENTO DE DATOS\newline"
-author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\newline
-  Rocío Bono Moreno y Pau García Pérez."
+title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
+author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
 date: "2025-05-10"
 output:
-  pdf_document:
-    toc: true
-    toc_depth: '2'
+  bookdown::pdf_document2:
+    fig_caption: yes
     df_print: kable
+    keep_tex: true
   html_document:
     toc: true
     toc_depth: 2
     toc_float: true
-    df_print: kable
-header-includes:
-  - \usepackage{lineno}
 ---
   
 ```{r setup, include=FALSE} 
@@ -34,11 +30,7 @@ library(stringr)
 library(lubridate)
 library(knitr)
 library(kableExtra)
-
-# Configurar nombres en español para gráficos
-options(OutDec = ",", digits = 2)
 ```
-
 
 \newpage
 
@@ -88,9 +80,9 @@ En esta primera fase, trabajamos con un conjunto de diferentes variables , que a
 
 texto
 ```{r, results='hide'}
-load("data/1_df_precios.RData")
-load("data/1_df_iva.RData")
-load("data/1_df_general.RData")
+
+
+
 ```
 
 \nolinenumbers
@@ -133,7 +125,7 @@ load("data/1_df_general.RData")
 
 18.-¿Cuánto supone económicamente de media el IVA en las compras?
 
-19.-¿De los 5 productos más comprados, cual de ellos ha subido más el precio?¿y cual ha bajado más su precio? 
+19.-¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo?
 
 20.- ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
 
@@ -207,18 +199,15 @@ top5_frutas_verduras
 \linenumbers
 
 
-```{r tabla-pesc}
+```{r}
+
 df_p %>% filter(Tipo == "Pescado") %>% 
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
          arrange(desc(Cantidad)) %>% 
-         head(5) %>%
-         kable(caption = "Venta Pescado Fruta y Verdura", 
-               booktabs = TRUE,
-               format = "latex") %>%
-         kable_styling(latex_options = c("striped", "hold_position"),position = "center")
+         head(3) %>% kable()
+
 ```
-En la tabla \@ref(tab:tabla-pesc) se puede ver los 5 productos de tipo pescado más vendidos y la cantidad de los mismos en kg.
 
 
 \nolinenumbers
@@ -230,30 +219,12 @@ En la tabla \@ref(tab:tabla-pesc) se puede ver los 5 productos de tipo pescado m
 Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
 
 ```{r}
-library(patchwork)
 #Preparación de datos
 plat_ban <- inner_join(df_p, df_h, by = "index")
-plat_ban <- plat_ban %>% arrange(Fecha)
+plat_ban <- plat_ban %>% arrange(Fecha) %>% filter(Descripcion == "BANANA" | Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
 
-
-#Banana
-banana <- plat_ban %>% filter(Descripcion == "BANANA") %>% mutate(Fecha = as.factor(Fecha))
-
-#Utilizando table comprobamos que hay dos fechas iguales por tanto eliminaremos una de ellas, ya que el mismo dia cuesta los mismo
-banana <- banana %>% filter(index != 270)
-
-#Para comparar utilizaremos la columna Precio (es la que representa €/kg)
-
-ggbanana <- ggplot(banana, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Banana")
-
-#Platano
-platano <- plat_ban %>% filter(Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
-#Nuevamente tenemos dos casos donde hay compras en la misma fecha. Borramos para dejarnos uno por dia
-
-platano <- platano %>% filter(index != 188 & index != 191 & index != 216 & index != 218)
-ggplatano <- ggplot(platano, aes(x = Fecha, y = Precio, fill = Descripcion)) + geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") + ggtitle("Platano")
-ggplatano + ggbanana
+#Para comparar utilizaremos la columna Precio (es la que representa €/kg), tambien usamos jitter por si un mismo dia tiene diferentes compras
+ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion)) + ggtitle("Banana vs Platano")
 ```
 
 Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
@@ -548,7 +519,7 @@ La cantidad media de productos por ticket es de 18.80198 productos.
 
 \linenumbers
 
-Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45).
+Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45). Para ello crearemos una nueva columna.
 
 ```{r}
 partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13,"mañana", ifelse(Hora_hora>= 14 & Hora_hora<= 18, "tarde", "noche")))
@@ -562,7 +533,7 @@ Podemos observar que durante la noche y la tarde se hacen muchas más compras qu
 partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 
 
-ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge") + ggtitle("Compras durante el dia")
 
 ```
 
@@ -571,9 +542,10 @@ Se confirma lo que pensabamos se va más por la mañana en el fin de semana en c
 \nolinenumbers
 
 
-**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - febrero)... ?  **
+**Pregunta 16 : ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - marzo)... ? **
 
 \linenumbers
+
 Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
 
 ```{r}
@@ -609,26 +581,42 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 
 \nolinenumbers
 
-
-**Pregunta 18 :¿Cuánto supone económicamente de media el IVA en las compras?**
-
+**Pregunta 18 : ¿Cuánto supone económicamente de media el IVA en las compras? **
 \linenumbers
 
 ```{r}
-(sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+
 ```
 
-Tenemos que entre todos los tiquets recolectados de media en iva se paga 3.40€.
 
 \nolinenumbers
-
-
-**Pregunta 19 : ¿De los 5 productos más comprados, cual de ellos ha subido más el precio?¿y cual ha bajado más su precio? **
+**Pregunta 19 :¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo?**
 
 \linenumbers
 
 ```{r}
+# Filtrar productos con "aceite", extraer mes y tipo
+df_aceite <- df_p %>%
+  filter(str_detect(Descripcion, "ACEITE")) %>%
+  left_join(df_h, by = "index") %>%
+  mutate(
+    mes = month(Fecha, label = TRUE, abbr = TRUE)) %>%
+  group_by(mes, Descripcion) %>%
+  summarise(precio_medio = mean(Precio)) %>%
+  group_by(Descripcion) %>%
+  filter(n() > 1) %>%  # Filtrar solo los tipos que aparecen en más de un mes
+  ungroup()
 
+# Visualizar evolución del precio por tipo de aceite
+ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = Descripcion)) +
+  geom_line(size = 1.2) +
+  geom_point() +
+  labs(
+    title = "Evolución mensual del precio del aceite",
+    x = "Mes",
+    y = "Precio",
+    color = "Tipo de aceite"
+  ) 
 ```
 
 \nolinenumbers
@@ -638,18 +626,21 @@ Tenemos que entre todos los tiquets recolectados de media en iva se paga 3.40€
 
 \linenumbers
 
+
 ```{r}
+
 df_p %>% filter(Tipo != "") %>% 
           group_by(Tipo) %>% 
           summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
           kable(caption = "Venta Pescado Fruta y Verdura \\label{tab:tabla-gastopov}", 
                 booktabs = TRUE,
                 format = "latex") %>%
-          kable_styling(latex_options = c("striped", "hold_position"),
-                        position = "center")
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center"
+  )
 ```
-
- En la tabla \@ref(tab:tabla-gastopov) se puede apreciar el gasto total en euros, y la cantidad vendidad de ese tipo de producto.
+    
 
 \nolinenumbers
 
@@ -710,7 +701,7 @@ tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
 tiempo_medio
 ```
 
-El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente.
+El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 27 minutos.
 
 
 \nolinenumbers
