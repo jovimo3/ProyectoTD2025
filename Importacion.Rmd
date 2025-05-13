@@ -725,7 +725,7 @@ media_productos
 
 La cantidad media de productos por ticket es de 18.80198 productos.
 
--   ¿Qué productos son los más comprados en las diferentes partes del día: mañana, tarde y noche?
+-   ¿Cuando se hacen más compras en las diferentes partes del día: mañana, tarde y noche? 
 
 Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 - 18:59) y noche (19:00 - 21:45). Para ello crearemos una nueva columna.
 
@@ -754,9 +754,8 @@ Se confirma lo que pensabamos se va más por la mañana en el fin de semana en c
     (sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
     ```
 
--   ¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?
 =======
--   ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - marzo)... ? (representación gráfica) 
+-   ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - marzo)... ? 
 
 Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
 
