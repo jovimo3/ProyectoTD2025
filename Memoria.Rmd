@@ -187,7 +187,7 @@ frutas_verduras_ventas <- df_frutas_verduras %>%
   arrange(desc(total_kilos_vendidos))
 
 # Seleccionamos los 5 productos con más kilos vendidos.
-top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
+top5_frutas_verduras <- head(frutas_verduras_ventas, 5) %>% kable()
 
 top5_frutas_verduras
 ```
@@ -467,7 +467,7 @@ coocurrencias <- df_limpio %>%
   summarise(Frecuencia = n(), .groups = "drop") %>%
   arrange(desc(Frecuencia))
 
-head(coocurrencias, 10)
+head(coocurrencias, 10) %>% kable()
 ```
 Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva". Esto también ocurre a la viceversa.
 
@@ -485,7 +485,8 @@ df_p$Importe <- as.numeric(df_p$Importe)
 producto_mas_caro <- df_p %>%
   filter(!is.na(Importe)) %>%
   arrange(desc(Importe)) %>%
-  slice(1)
+  slice(1) %>% 
+  kable()
 
 producto_mas_caro
 ```
