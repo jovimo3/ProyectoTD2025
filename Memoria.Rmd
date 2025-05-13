@@ -616,7 +616,7 @@ Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiqu
 
 \linenumbers
 
-```{r}
+```{r figura-tiempcomp, fig.cap="Tiempo medio Compra"}
 # Filtrar productos con "aceite", extraer mes y tipo
 df_aceite <- df_p %>%
   filter(str_detect(Descripcion, "ACEITE")) %>%
@@ -640,6 +640,8 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
     color = "Tipo de aceite"
   ) 
 ```
+
+En el gráfico \@ref(fig: figura-tiempcomp) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
 
 \nolinenumbers
 
@@ -669,7 +671,8 @@ Se puede ver con claridad que tanto el producto más comprado es la fruta o verd
 
 \linenumbers
 
-```{r}
+```{r }
+
 # Crear df_parking con la información del uso del parking
 df_parking <- df_h %>%
   select(index, PARKING_ENTRADA) %>%
@@ -687,11 +690,17 @@ usado_parking_df <- productos_por_ticket %>%
   group_by(usado_parking) %>%
   summarise(mediana_prod = median(num_productos),total_prod = n())
 
-usado_parking_df
+usado_parking_df %>%
+          kable(caption = "Relación Compra y Uso Parking \\label{tab:tabla-compark}", 
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center")
 
 ```
 
-Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
+Como se ve en la tabla \@ref(tab:tabla-compark), cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
 
 Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
 
@@ -701,7 +710,7 @@ Por lo que podemos concluir, que cuando se utiliza el parking es más probable q
 
 \linenumbers
 
-```{r}
+```{r figura-tiempcomp, fig.cap="Tiempo medio Compra"}
 df_parking_tiempos <- df_h %>%
   select(PARKING_ENTRADA, PARKING_SALIDA) %>%
   filter(PARKING_ENTRADA != "00:00") %>%
@@ -716,10 +725,21 @@ df_parking_tiempos <- df_h %>%
 
 # Calcular el tiempo medio
 tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
-tiempo_medio
+
+#ggplot() + geom_bar(aes(y = df_parking_tiempos$tiempo_diferencia))
+ggplot(df_parking_tiempos, aes(x = tiempo_diferencia)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "black") +
+  labs(title = "Distribución Tiempo Compra",
+       x = "Tiempo (minutos)", y = "Frecuencia") +
+  theme_minimal() +
+  geom_vline(aes(xintercept = tiempo_medio),
+             color = "red", linetype = "dashed", size = 1)
+
 ```
 
-El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 27 minutos.
+El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 27 minutos aproximadamente.
+
+En el gráfico \@ref(fig:figura-tiempcomp) se puede ver como se distribuyen los tiempos de compra mediante un histograma marcando con una línea roja el valor de la media mencionado.
 
 \nolinenumbers
 
