@@ -687,7 +687,7 @@ tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
 tiempo_medio
 ```
 
-El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente.
+El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 27 minutos.
 
 
 \nolinenumbers
