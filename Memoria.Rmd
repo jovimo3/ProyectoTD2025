@@ -688,32 +688,8 @@ Una de las cosas destacables ya ha sido comentado previamente en una de las preg
 
 \nolinenumbers
 
-**Pregunta 17 : ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra?**
 
-\linenumbers
-
-```{r}
-cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
-cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
-
-
-
-ggplot(df_h, aes(x = df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, y = TOTAL_PAGO)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "loess", se = FALSE, colour = "blue") +
-  labs(
-    title = "Relación entre precio medio y cantidad de productos",
-    x = "TOTAL_PAGO / cantidad_total",
-    y = "TOTAL_PAGO"
-  ) +
-  theme_minimal()
-```
-
-Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
-
-\nolinenumbers
-
-**Pregunta 18 : ¿Cuánto supone económicamente de media el IVA en las compras?** 
+**Pregunta 17 : ¿Cuánto supone económicamente de media el IVA en las compras?** 
 \linenumbers
 
 ```{r figura-iva, fig.cap="Peso IVA"}
@@ -747,7 +723,7 @@ Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiqu
 \nolinenumbers
 
 
-**Pregunta 19 :¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo?**
+**Pregunta 18 :¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo?**
 
 \linenumbers
 
@@ -780,7 +756,7 @@ En el gráfico \@ref(fig: figura-precaceite) se puede observar que a lo largo de
 
 \nolinenumbers
 
-**Pregunta 20 : ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?**
+**Pregunta 19 : ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?**
 
 \linenumbers
 
@@ -802,7 +778,7 @@ Se puede ver con claridad que tanto el producto más comprado es la fruta o verd
 
 \nolinenumbers
 
-**Pregunta 21 :¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?**
+**Pregunta 20 :¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?**
 
 \linenumbers
 
@@ -841,7 +817,7 @@ Por lo que podemos concluir, que cuando se utiliza el parking es más probable q
 
 \nolinenumbers
 
-**Pregunta 22 : ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?**
+**Pregunta 21 : ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?**
 
 \linenumbers
 
