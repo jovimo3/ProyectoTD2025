@@ -600,14 +600,33 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 **Pregunta 18 : ¿Cuánto supone económicamente de media el IVA en las compras?** 
 \linenumbers
 
-```{r}
-(sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+```{r figura-iva, fig.cap="Variación Precio Aceite"}
+media <- (sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+
+valores <- df_iva %>% group_by(index) %>% 
+                      mutate(gasto = sum(CUOTA)) %>% 
+                      select(index, gasto) %>% 
+                      distinct()
+
+#total <- df_h %>% select(index,TOTAL_PAGO) %>% distinct()
+#mean(total$TOTAL_PAGO, na.rm = T)
+
+ggplot() +
+  geom_histogram(aes(x = valores$gasto), 
+                 binwidth = 0.5, 
+                 fill = "steelblue", 
+                 color = "black") +
+  labs(title = "Distribución Gasto en IVA",
+       x = "Dinero (€)", y = "Frecuencia") +
+  theme_minimal() +
+  geom_vline(aes(xintercept = media),
+             color = "red", linetype = "dashed", size = 1) 
 
 ```
 
 En cada tiquet tenemos que dependiendo del producto se aplica un tipo de iva u otro, si sumamos la cantidad de dinero que esto representan para cada tiquet, podemos saber cual es la media.
 
-Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiquet.
+Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiquet respecto a 46€ de media de gasto por cada tiquet. A su vez mediante el gráfico \@ref(fig:figura-iva) se puede ver que la distribución tiende a un bajo coste en IVA
 
 \nolinenumbers
 
@@ -641,7 +660,7 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
   ) 
 ```
 
-En el gráfico \@ref(fig: ffigura-precaceite) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
+En el gráfico \@ref(fig: figura-precaceite) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
 
 \nolinenumbers
 
@@ -726,7 +745,7 @@ df_parking_tiempos <- df_h %>%
 # Calcular el tiempo medio
 tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
 
-#ggplot() + geom_bar(aes(y = df_parking_tiempos$tiempo_diferencia))
+
 ggplot(df_parking_tiempos, aes(x = tiempo_diferencia)) +
   geom_histogram(binwidth = 5, fill = "steelblue", color = "black") +
   labs(title = "Distribución Tiempo Compra",
