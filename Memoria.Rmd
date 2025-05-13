@@ -722,3 +722,19 @@ tiempo_medio
 El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 27 minutos.
 
 \nolinenumbers
+
+
+\newpage
+
+\nolinenumbers
+
+# Conclusión
+
+\linenumbers
+
+Este proyecto nos ha permitido enfrentarnos a un problema real de tratamiento y análisis de datos, trabajando tickets (en PDF) y convirtiéndola en datos analizables. Hemos desarrollado un sistema capaz de analizar y limpiar automáticamente los tickets electrónicos de Mercadona, descartando el resto de tickets posibles. Siendo capaces de extraer diferentes variables como productos, cantidades, fechas, localizaciones y precios. 
+
+Durante el proyecto hemos sido capaces de identificar patrones de comportamiento del consumidor y diferencias según ciudades o días de la semana. Con este trabajo hemos realizado un análisis completo de datos en un entorno realista, pudiendo desarrollar habilidades técnicas y competencias necesarias para el trabajo en equipo.
+
+\nolinenumbers
+
