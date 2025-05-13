@@ -92,11 +92,6 @@ En esta primera fase, trabajamos con un conjunto de diferentes variables , que a
 
 \nolinenumbers
 
-## Características generales de nuestros datos y nuestras variables
-
-\linenumbers
-
-texto
 
 ```{r, results='hide'}
 load("data/1_df_general.RData")
