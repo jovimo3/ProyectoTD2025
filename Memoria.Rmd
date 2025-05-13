@@ -1,8 +1,6 @@
 ---
 title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
-author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,",
-        " Rocío Bono Moreno y Pau García Pérez."
-
+author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell, Rocío Bono Moreno y Pau García Pérez."
 date: "2025-05-10"
 output:
   bookdown::pdf_document2:
