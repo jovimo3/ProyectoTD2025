@@ -1,6 +1,11 @@
 ---
 title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
-author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell, Rocío Bono Moreno y Pau García Pérez."
+author: 
+  - "Laura Horjales Rivas"
+  - "Arnau Hernández Lucas"
+  - "Josep Vicent Morales Martorell"
+  - "Rocío Bono Moreno"
+  - "Pau García Pérez"
 date: "2025-05-10"
 output:
   bookdown::pdf_document2:
@@ -481,6 +486,8 @@ Como podemos ver en el boxplot Alcoy es la ciudad con más tickets y donde más 
 
 \nolinenumbers
 
+
+
 **Pregunta 10 : ¿Cuánto dinero de media se gasta cada cliente en una compra?**
 
 \linenumbers
@@ -506,6 +513,9 @@ resumen_gasto %>%
 ```
 
 En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€. \nolinenumbers
+
+\newpage
+
 
 **Pregunta 11 : ¿Cuál es el mes o período en el que más gastos se realizan? ¿Durante las vacaciones de navidad?**
 
@@ -549,6 +559,8 @@ ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) 
 
 Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos es diciembre. Fijandonos en el año 2024 (verde), el período con más gastos es en enero (siendo el único año con tickets todos los meses). En el año 2025 (azul) es febrero el mes con más gastos. Por lo que el período con más gastos no es en la época de Navidad.
 
+\newpage
+
 \nolinenumbers
 
 **Pregunta 12 : ¿Qué productos suelen comprarse juntos?**
@@ -583,6 +595,8 @@ Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "p
 
 \nolinenumbers
 
+
+
 **Pregunta 13 : ¿Cuál es el producto más caro registrado en los tickets?**
 
 \linenumbers
@@ -606,6 +620,8 @@ producto_mas_caro %>%
 ```
 
 El producto más caro registrado es el "alistado mediano", que tiene un precio de 31.33 euros.
+
+\newpage
 
 \nolinenumbers
 
@@ -642,6 +658,8 @@ ggplot(productos_por_ticket, aes(x = Total_Productos)) +
 
 La cantidad media de productos por ticket es de 18.61856 productos.
 
+\newpage
+
 \nolinenumbers
 
 **Pregunta 15 : ¿Cuando se hacen más compras en las diferentes partes del día: mañana, tarde y noche?**
@@ -675,6 +693,8 @@ ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat
 ```
 
 Se confirma lo que pensabamos se va más por la mañana en el fin de semana en cambio durante los dias laborales por la tarde y la noche se va mucho más a comprar
+
+\newpage
 
 \nolinenumbers
 
@@ -712,6 +732,7 @@ Una de las cosas destacables ya ha sido comentado previamente en una de las preg
 \nolinenumbers
 
 
+
 **Pregunta 17 : ¿Cuánto supone económicamente de media el IVA en las compras?** 
 \linenumbers
 
@@ -742,6 +763,8 @@ ggplot() +
 En cada tiquet tenemos que dependiendo del producto se aplica un tipo de iva u otro, si sumamos la cantidad de dinero que esto representan para cada tiquet, podemos saber cual es la media.
 
 Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiquet respecto a 46€ de media de gasto por cada tiquet. A su vez mediante el gráfico \@ref(fig:figura-iva) se puede ver que la distribución tiende a un bajo coste en IVA
+
+\newpage
 
 \nolinenumbers
 
@@ -777,6 +800,8 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
 
 En el gráfico \@ref(fig: figura-precaceite) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
 
+\newpage
+
 \nolinenumbers
 
 **Pregunta 19 : ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?**
@@ -800,6 +825,8 @@ En la tabla \@ref(tab:tabla-gastopov) podemos ver represenado el gasto en euros 
 Se puede ver con claridad que tanto el producto más comprado es la fruta o verdura respecto a los de tipo pescado, con esto se observa debido a la gran diferencia de compra que en la fruta y verdura se ha gastado más.
 
 \nolinenumbers
+
+
 
 **Pregunta 20 :¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?**
 
@@ -837,6 +864,8 @@ usado_parking_df %>%
 Como se ve en la tabla \@ref(tab:tabla-compark), cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
 
 Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
+
+\newpage
 
 \nolinenumbers
 
