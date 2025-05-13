@@ -616,7 +616,7 @@ Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiqu
 
 \linenumbers
 
-```{r figura-tiempcomp, fig.cap="Tiempo medio Compra"}
+```{r figura-precaceite, fig.cap="Variación Precio Aceite"}
 # Filtrar productos con "aceite", extraer mes y tipo
 df_aceite <- df_p %>%
   filter(str_detect(Descripcion, "ACEITE")) %>%
@@ -641,7 +641,7 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
   ) 
 ```
 
-En el gráfico \@ref(fig: figura-tiempcomp) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
+En el gráfico \@ref(fig: ffigura-precaceite) se puede observar que a lo largo del año las variaciones en el aceite no han sido apenas apreciables excepto en los casos del aceite virgen extra y el aceite virgen, que toman un augmento considerable de casi el doble de su precio prebio en marzo o febrero.
 
 \nolinenumbers
 
