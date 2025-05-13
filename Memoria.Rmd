@@ -213,13 +213,13 @@ df_p %>% filter(Tipo == "Pescado") %>%
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
          arrange(desc(Cantidad)) %>% 
-         head(5) #%>% 
-         #kable(caption = "Pescados Más Vendidos \\label{tab:tabla-pesven}", 
-                #booktabs = TRUE,
-                #format = "latex") %>%
-          #kable_styling(
-           #     latex_options = c("striped", "hold_position"),
-            #    position = "center")
+         head(5) %>% 
+         kable(caption = "Pescados Más Vendidos \\label{tab:tabla-pesven}", 
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center")
 
 ```
 
