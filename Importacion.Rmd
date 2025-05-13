@@ -22,7 +22,6 @@ knitr::opts_chunk$set(echo = TRUE)
 Conjunto de librerías a utilizar:
 
 ```{r results='hide'}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(pdftools)
 library(tidyr)
 library(dplyr)
@@ -30,7 +29,6 @@ library(ggplot2)
 library(stringr)
 library(lubridate)
 library(knitr)
-library(kableExtra)
 
 # Configurar nombres en español para gráficos
 options(OutDec = ",", digits = 2)
@@ -627,7 +625,7 @@ df_h %>%
   ggplot(aes(x = Ciudad, y = TOTAL_PAGO)) +
     geom_boxplot() +
     labs(
-      title = "Distribución del importe total por ciudad (n >= 5)",
+      title = "Distribución del importe total por ciudad (n ≥ 5)",
       x = "Ciudad", y = "Importe total (€)"
     ) +
     theme_minimal() +
@@ -767,46 +765,13 @@ Se confirma lo que pensabamos se va más por la mañana en el fin de semana en c
 
 -   ¿Cuánto supone económicamente de media el IVA en las compras
 
-<<<<<<< HEAD
     ```{r}
     (sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
     ```
 
 -   ¿Que productos son los más comprados durante el verano (1 de junio - 31 de agosto)?
-=======
--   ¿Que productos son los más comprados durante las diferentes estaciones, verano (junio - agosto),  invierno(diciembre - marzo)... ? (representación gráfica) 
 
-Para ello haremos los mismo que hemos hecho previamente pero esta vez dividiendo por estaciones: verano (junio - agosto), invierno(diciembre - febrero), otoño (septiembre - noviembre) y primavera (marzo - mayo)
-
-```{r}
-estaciones <- df_h %>% mutate(estacion = ifelse(month(Fecha) >= 3 & month(Fecha) <=5, "primavera", ifelse(month(Fecha)>=6 & month(Fecha)<= 8, "verano", ifelse(month(Fecha)>=9 & month(Fecha)<=11, "otoño", "invierno")))) %>% inner_join(df_p, by = "index")
-
-
-top_5 <- estaciones %>% group_by(estacion, Descripcion) %>% summarise(Frecuencia = n(), .groups = "drop") %>% arrange(desc(Frecuencia)) %>% filter(Descripcion !="BOLSA PLASTICO")
-#invierno
-top_5 %>% filter(estacion == "invierno") %>% head(5)
-#primavera
-top_5 %>% filter(estacion == "primavera") %>% head(5)
-#verano
-top_5 %>% filter(estacion == "verano") %>% head(5)
-#otoño
-top_5 %>% filter(estacion == "otoño") %>% head(5)
-
-
-```
-Una de las cosas destacables ya ha sido comentado previamente en una de las preguntas, ya que en invierno y en otoño se puede ver que el platano es el producto más comprado cuando luego en la tabla de verano y primavera no aparece y en su defecto aparece la Banana. Esto es debido a que durante las estaciones de primavera y verano el precio del platano es mucho más superior al estar fuera de temporada. Igualmente con otras frutas que salen en el top únicamente en una estación o en dos, podríamos atribuir este hecho a que cada fruta tiene una temporada.
-
-
--   ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra? 
-
-```{r}
-
-cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
-cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
-```
-Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados  ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
->>>>>>> 8f57bc26aec6548212ade53ee2de8a931251e5dc
-
+-   ¿Que productos son los más comprados durante el invierno(21 diciembre - 20 marzo)?
 
 -   ¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo, haz una gráfica para apreciarlo mejor?
 
@@ -835,30 +800,20 @@ ggplot(df_aceite, aes(x = mes, y = precio_medio, color = Descripcion, group = De
   ) 
 ```
 
-    Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
+Según nuestros datos, como se ve en la gráfica, se nota una gran subida de precio en el aceite virgen y virgen ex durante la primavera, y después baja progresivamente. Los otros productos no se ven muy afectados.
 
--  ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
+-   ¿En que se ha gastado(€) más en pescado o en otros productos que van por peso? ¿Es equivalente al número de veces que se han comprado unidades de estos?
 
-    En la tabla \@ref(tab:tabla-gastopov) se puede apreciar el gasto total en euros, y la cantidad vendidad de ese tipo de producto.
+    ```{r}
+    df_p %>% filter(Tipo != "") %>% 
+             group_by(Tipo) %>% 
+             summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
+             kable()
+    ```
 
-```{r }
+-   ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
 
-df_p %>% filter(Tipo != "") %>% 
-          group_by(Tipo) %>% 
-          summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
-          kable(caption = "Venta Pescado Fruta y Verdura \\label{tab:tabla-gastopov}", 
-          booktabs = TRUE,
-          format = "latex") %>%
-kable_styling(
-    latex_options = c("striped", "hold_position"),
-    position = "center"
-  )
-```
-    
-
--  ¿Hay una relación entre la cantidad de productos que se compra y si ha utilizado el parking o no?
-
-```{r }
+```{r}
 # Crear df_parking con la información del uso del parking
 df_parking <- df_h %>%
   select(index, PARKING_ENTRADA) %>%
@@ -880,9 +835,9 @@ usado_parking_df
 
 ```
 
-    Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
+Como se ve en el dataframe, cuando no se utiliza el parking, el número de productos es más bajo (mediana = 13). Cuando se utiliza el parking, el número de productos es más alto (mediana = 19).
 
-    Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
+Por lo que podemos concluir, que cuando se utiliza el parking es más probable que se compren más productos que si no se utiliza.
 
 -   ¿Cual es el tiempo medio que tardan en hacer la compra las personas que han utilizado el parking?
 
@@ -901,16 +856,7 @@ df_parking_tiempos <- df_h %>%
 
 # Calcular el tiempo medio
 tiempo_medio <- mean(df_parking_tiempos$tiempo_diferencia, na.rm = TRUE)
-
-df_parking_tiempos |>
-  mutate(indice = row_number()) |>
-  arrange(tiempo_diferencia) |>
-  mutate(orden = row_number()) |>
-  ggplot(aes(x = orden, y = tiempo_diferencia)) +
-  geom_point() +
-  labs(title = "Distribución Tiempo Compra Segun Tiempo Parking", 
-       x = "Índice ordenado", y = "Tiempo (min)")
-
+tiempo_medio
 ```
 
-    El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
+El tiempo medio que tardan en hacer la compra las personas que utilizan el parking es de 28 minutos y medio aproximadamente
