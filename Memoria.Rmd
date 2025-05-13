@@ -695,6 +695,18 @@ Una de las cosas destacables ya ha sido comentado previamente en una de las preg
 ```{r}
 cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
 cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
+
+
+
+ggplot(df_h, aes(x = df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, y = TOTAL_PAGO)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "loess", se = FALSE, colour = "blue") +
+  labs(
+    title = "Relación entre precio medio y cantidad de productos",
+    x = "TOTAL_PAGO / cantidad_total",
+    y = "TOTAL_PAGO"
+  ) +
+  theme_minimal()
 ```
 
 Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
