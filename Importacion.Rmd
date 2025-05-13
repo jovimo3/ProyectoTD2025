@@ -3,11 +3,11 @@ title: "Importacion"
 author: "Morales Martorell, Josep Vicent, Rocio Bono Moreno, Laura Horjales Rivas, Arnau Hernández Lucas y Pau García Pérez."
 date: "2025-04-03"
 output:
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     fig_caption: yes
     df_print: kable
     keep_tex: true
-  bookdown::pdf_document2:
+  bookdown::html_document2:
     fig_caption: yes
     df_print: kable
     keep_tex: true
@@ -479,7 +479,7 @@ plat_ban <- inner_join(df_p, df_h, by = "index")
 plat_ban <- plat_ban %>% arrange(Fecha) %>% filter(Descripcion == "BANANA" | Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
 
 #Para comparar utilizaremos la columna Precio (es la que representa €/kg), tambien usamos jitter por si un mismo dia tiene diferentes compras
-ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion))
+ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion)) + ggtitle("Platanos vs Bananas")
 ```
 
 Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
@@ -673,7 +673,7 @@ Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos 
 
 -   ¿Qué productos suelen comprarse juntos?
 
-```{r}
+```{r warning=FALSE}
 library(dplyr)
 
 # Filtramos solo las columnas importantes y eliminamos los duplicados por ticket
@@ -734,16 +734,16 @@ Para esta pregunta separaremos el día en mañana (9:00 - 13:59), tarde (14:00 -
 ```{r}
 partes_dia <- df_h %>% mutate(parte_dia = ifelse(Hora_hora>= 9 & Hora_hora <= 13,"mañana", ifelse(Hora_hora>= 14 & Hora_hora<= 18, "tarde", "noche")))
 
-partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras))
+partes_dia %>% group_by(parte_dia) %>% summarise(Compras = n()) %>%  arrange(desc(Compras)) 
 ```
 
 Podemos observar que durante la noche y la tarde se hacen muchas más compras que en comparación por la mañana, ya que las compras entre semana se hacen más usualmente por la tarde, ya que por la mañana las personas normalmente trabajan o estudían. Por esto queremos ir más allá y vamos a separarlo entre dias de la semana y dias del fin de semana
 
-```{r}
+```{r warning=FALSE}
 partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 
 
-ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge") + ggtitle("Compras durante el dia")
 
 ```
 
@@ -793,7 +793,7 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 
 -   ¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo, haz una gráfica para apreciarlo mejor?
 
-```{r}
+```{r warning=FALSE}
 # Filtrar productos con "aceite", extraer mes y tipo
 df_aceite <- df_p %>%
   filter(str_detect(Descripcion, "ACEITE")) %>%
