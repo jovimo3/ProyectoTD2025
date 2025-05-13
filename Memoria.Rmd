@@ -39,12 +39,6 @@ library(kableExtra)
 options(OutDec = ",", digits = 2)
 ```
 
-```{r}
-load("data/1_df_precios.RData")
-load("data/1_df_iva.RData")
-load("data/1_df_general.RData")
-```
-
 
 \newpage
 
@@ -94,9 +88,9 @@ En esta primera fase, trabajamos con un conjunto de diferentes variables , que a
 
 texto
 ```{r, results='hide'}
-
-
-
+load("data/1_df_precios.RData")
+load("data/1_df_iva.RData")
+load("data/1_df_general.RData")
 ```
 
 \nolinenumbers
