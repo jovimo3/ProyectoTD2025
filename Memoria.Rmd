@@ -5,7 +5,7 @@ author:
   - "Arnau Hernández Lucas"
   - "Josep Vicent Morales Martorell"
   - "Rocío Bono Moreno"
-  - "Pau García Pérez"
+  - "Pau Pérez García"
 date: "2025-05-10"
 output:
   bookdown::pdf_document2:
