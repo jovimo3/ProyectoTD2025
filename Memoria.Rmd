@@ -218,7 +218,7 @@ plat_ban <- inner_join(df_p, df_h, by = "index")
 plat_ban <- plat_ban %>% arrange(Fecha) %>% filter(Descripcion == "BANANA" | Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
 
 #Para comparar utilizaremos la columna Precio (es la que representa €/kg), tambien usamos jitter por si un mismo dia tiene diferentes compras
-ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion))
+ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion)) + ggtitle("Banana vs Platano")
 ```
 
 Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
@@ -527,7 +527,7 @@ Podemos observar que durante la noche y la tarde se hacen muchas más compras qu
 partes <- partes_dia %>% group_by(parte_dia, Tipo_dia) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
 
 
-ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge")
+ggplot(partes, aes(x = parte_dia, y = Compras, fill = Tipo_dia)) + geom_bar(stat = "identity", position = "dodge") + ggtitle("Compras durante el dia")
 
 ```
 
