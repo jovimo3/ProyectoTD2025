@@ -38,6 +38,7 @@ library(stringr)
 library(lubridate)
 library(knitr)
 library(kableExtra)
+library(lubridate)
 ```
 
 \newpage
@@ -176,7 +177,13 @@ productos_ventas <- df_unidades %>%
 # Seleccionamos los 5 productos con más ventas
 top_5_productos <- head(productos_ventas, 5)
 
-top_5_productos
+top_5_productos %>% 
+         kable(caption = "Productos más Vendidos por nidad \\label{tab:tabla-prod_vend_max}", 
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center")
 
 ```
 
@@ -201,9 +208,16 @@ frutas_verduras_ventas <- df_frutas_verduras %>%
   arrange(desc(total_kilos_vendidos))
 
 # Seleccionamos los 5 productos con más kilos vendidos.
-top5_frutas_verduras <- head(frutas_verduras_ventas, 5) %>% kable()
+top5_frutas_verduras <- head(frutas_verduras_ventas, 5)
 
-top5_frutas_verduras
+top5_frutas_verduras %>% 
+         kable(caption = "Productos más Vendidos \\label{tab:tabla-prod_vend_max}", 
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center")
+
 ```
 
 \nolinenumbers
@@ -240,13 +254,19 @@ Esta tabla tambien nos muestra que apesar de que la dorada dentro de los 5 peces
 
 Para ello primero sacaremos todas las veces que se ha comprado bananas y platanos(como necesitamos que este ordenado por la fecha haremos un inner_join)
 
-```{r}
+```{r figura-Ban_Plat_Ev, fig.cap="Evolución Precio Bananas y Platanos", fig.pos='H'}
 #Preparación de datos
 plat_ban <- inner_join(df_p, df_h, by = "index")
 plat_ban <- plat_ban %>% arrange(Fecha) %>% filter(Descripcion == "BANANA" | Descripcion == "PLATANO") %>% mutate(Fecha = as.factor(Fecha))
 
 #Para comparar utilizaremos la columna Precio (es la que representa €/kg), tambien usamos jitter por si un mismo dia tiene diferentes compras
-ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + geom_point() + geom_jitter() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + geom_line(aes(group = Descripcion)) + ggtitle("Banana vs Platano")
+ggplot(plat_ban, aes(x = Fecha, y = Precio, colour = Descripcion)) + 
+  geom_point() + 
+  geom_jitter(width = 0.3) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  geom_line(aes(group = Descripcion)) + 
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  ggtitle("Banana vs Platano")
 ```
 
 Se puede observar en las gráficas que el precio del platano es mucho más variado, es decir desde marzo a julio tiene un valor superior y luego baja. En cambio la banana tiene un valor más constante y independientemente de la temporada tiene prácticamente el mismo precio.
@@ -262,7 +282,15 @@ También hay que considerar que tenemos el doble de observaciones de platano por
 Para esto ya hemos creado una columna llamada Ciudad donde estan las procedencias de los tickets. Para saber las ciudades donde se compra más agruparemos por ciudades i contaremos el numero de casos que hay.
 
 ```{r}
-df_h %>% group_by(Ciudad) %>% summarise(Compras = n()) %>% arrange(desc(Compras))
+df_h %>% group_by(Ciudad) %>% 
+         summarise(Compras = n()) %>% 
+         arrange(desc(Compras)) %>%
+         kable(caption = "Procedencia Tiquets \\label{tab:tabla-proc_tiq}", 
+              booktabs = TRUE,
+              format = "latex") %>%
+        kable_styling(
+              latex_options = c("striped", "hold_position"),
+              position = "center")
 ```
 
 Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
@@ -271,7 +299,7 @@ Como era previsible al ser los tickets de los alumnos, era mucha más probable q
 
 **Pregunta 6 : Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?**
 
-```{r}
+```{r figura-tckporsem, fig.cap="Número de tickets por día de la semana",fig.pos='H'}
 df_h %>%
   mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
   group_by(dia_semana) %>%
@@ -286,9 +314,9 @@ df_h %>%
   ) +
   theme_minimal()
 
-df_h %>%
-  mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
-  filter(dia_semana == "domingo")
+#df_h %>%
+ # mutate(dia_semana = wday(Fecha, label = TRUE, abbr = FALSE, week_start = 1)) %>% # lunes como primer día
+  #filter(dia_semana == "domingo")
 ```
 
 Según el diagrama el día entre semana con menos tickets y por lo tanto ventas, es el jueves. Por lo que lo más inteligente sería cerrar este día, ya que es cuando menos gente va a Mercadona.
@@ -303,7 +331,7 @@ Según el diagrama el día entre semana con menos tickets y por lo tanto ventas,
 
 \linenumbers
 
-```{r}
+```{r }
 # Primero nos aseguramos de que 'Hora' esté en formato adecuado
 df_h$Hora <- as.POSIXct(df_h$Hora, format = "%H:%M", tz = "UTC")
 
@@ -322,7 +350,14 @@ hora_mas_frecuente <- df_h %>%
   slice_max(N_compras, n = 1) %>%
   arrange(Tipo_dia, Hora_hora)
 
-hora_mas_frecuente
+hora_mas_frecuente %>%
+               kable(caption = "Hora más Habitual Comprar \\label{tab:tabla-hora_compra}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
+
 ```
 
 Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 48 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
@@ -353,8 +388,16 @@ top5 <- df_prod %>%
 top5_laboral       <- top5 %>% filter(Tipo_dia == "Laboral")
 top5_fin_de_semana <- top5 %>% filter(Tipo_dia == "Fin de semana")
 
-top5_laboral
-top5_fin_de_semana
+ 
+
+
+rbind(top5_laboral,top5_fin_de_semana ) %>%
+               kable(caption = "Diferencias entre Compra Fin de Semana y Entre \\label{tab:tabla-fin_sem_entre}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
 ```
 
 Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
@@ -380,12 +423,18 @@ resumen_ciudad <- df_h %>%
   ) %>%
   arrange(desc(media_total))
 
-resumen_ciudad
+resumen_ciudad %>%
+               kable(caption = "Precio Por Zona \\label{tab:tabla-preczona}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
 ```
 
 Para verlo de manera más visual, podemos hacaer un diagrama de boxplot, donde la linea central refleja la mediana y los cuartiles la caja.
 
-```{r}
+```{r figura-preczona, fig.cap="Precio Por Zona",fig.pos='H'}
 # Filtramos para quedarnos con ciudades que tengan al menos 5 tickets
 ciudades_muestras <- df_h %>%
   count(Ciudad) %>%
@@ -397,7 +446,7 @@ df_h %>%
   ggplot(aes(x = Ciudad, y = TOTAL_PAGO)) +
     geom_boxplot() +
     labs(
-      title = "Distribución del importe total por ciudad (n ≥ 5)",
+      title = "Distribución del importe total por ciudad (n >= 5)",
       x = "Ciudad", y = "Importe total (€)"
     ) +
     theme_minimal() +
@@ -424,7 +473,13 @@ resumen_gasto <- df_h %>%
   )
 
 # 2. Mostrar el resultado
-resumen_gasto
+resumen_gasto %>%
+               kable(caption = "Media Gasto por Cliente \\label{tab:tabla-gastclie}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
 ```
 
 En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,8€ por compra, mientras que la mediana nos indica que el 50% de las compras cuestan menos de 37,05. La desviación de 38 nos indica que el gasto por compra varía bastante de un cliente a otro, es decir hay compras pequeñas de 20€y otras muy grandes de más de 100€. \nolinenumbers
@@ -436,8 +491,6 @@ En nuestro estudio tenemos 291 tickets, el gasto medio de cada cliente es de 45,
 Para resolver esta pregunta podemos realizar un gráfico de barras para observar mejor la información. En este gráfico se representan los datos de distintos tickets de 3 años diferentes (2023, 2024 y 2025). Al tener diferentes cantidades de tickets por mes de un año a otro, tenemos que decir un período por cada año de tickets (en este caso 3 meses). Por lo que este período no tiene porque coincidir todos los años.
 
 ```{r}
-library(lubridate)
-
 # Extraemos el mes y año de la fecha
 df_h <- df_h %>%
   mutate(Mes = month(Fecha, label = TRUE),
@@ -449,8 +502,16 @@ gastos_mensuales <- df_h %>%
   summarise(Gasto_Total = sum(TOTAL_PAGO, na.rm = TRUE)) %>%
   arrange(desc(Gasto_Total))
 
-head(gastos_mensuales)
+head(gastos_mensuales)%>%
+               kable(caption = "Gastos Mensuales \\label{tab:tabla-gastmen}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
+```
 
+```{r figura-gastmen, fig.cap="Gasto Mensual Total",fig.pos='H'}
 # Realizamos una gráfica para visualizar que mes es en el que más gastos se realizan.
 ggplot(gastos_mensuales, aes(x = Mes, y = Gasto_Total, fill = as.factor(Año))) +
   geom_bar(stat = "identity", position = "dodge") + 
@@ -472,7 +533,6 @@ Si nos fijamos en los tickets del año 2023 (color rosa) el mes con más gastos 
 \linenumbers
 
 ```{r}
-library(dplyr)
 
 # Filtramos solo las columnas importantes y eliminamos los duplicados por ticket
 df_limpio <- df_p %>%
@@ -487,7 +547,13 @@ coocurrencias <- df_limpio %>%
   summarise(Frecuencia = n(), .groups = "drop") %>%
   arrange(desc(Frecuencia))
 
-head(coocurrencias, 10) %>% kable()
+head(coocurrencias, 10) %>%
+               kable(caption = "Producto Comprados Juntos \\label{tab:tabla-prodjunt}", 
+                     booktabs = TRUE,
+                     format = "latex") %>%
+               kable_styling(
+                     latex_options = c("striped", "hold_position"),
+                     position = "center")
 ```
 
 Se observa que "almendra natural" se suele comprar con "cacahuete chocolate", "pepino" o "barrita muesli choco" y el "pan semillas" con "atun claro oliva". Esto también ocurre a la viceversa.
@@ -505,10 +571,10 @@ df_p$Importe <- as.numeric(df_p$Importe)
 producto_mas_caro <- df_p %>%
   filter(!is.na(Importe)) %>%
   arrange(desc(Importe)) %>%
-  slice(1) %>% 
+  slice(1)
 
-producto_mas_caro%>%
-               kable(caption = "Compras Durante el mañana, tarde y noche \\label{tab:tabla-compdurdia}", 
+producto_mas_caro %>%
+               kable(caption = "Producto más Caro En Tiquets \\label{tab:tabla-prodcaro}", 
                      booktabs = TRUE,
                      format = "latex") %>%
                kable_styling(
