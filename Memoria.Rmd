@@ -636,7 +636,7 @@ ggplot(df_h, aes(x = df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, y = TOTA
   geom_point(alpha = 0.6) +
   geom_smooth(method = "loess", se = FALSE, colour = "blue") +
   labs(
-    title = "Relación entre precio medio de los productos y la cantidad de productos de la compra",
+    title = "Relación entre precio medio y cantidad de productos",
     x = "TOTAL_PAGO / cantidad_total",
     y = "TOTAL_PAGO"
   ) +
