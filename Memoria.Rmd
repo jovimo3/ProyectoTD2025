@@ -1,6 +1,8 @@
 ---
 title: "MEMORIA TRATAMIENTO DE DATOS\\newline"
-author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,\\newline Rocío Bono Moreno y Pau García Pérez."
+author: "Laura Horjales Rivas, Arnau Hernández Lucas, Josep Vicent Morales Martorell,",
+        " Rocío Bono Moreno y Pau García Pérez."
+
 date: "2025-05-10"
 output:
   bookdown::pdf_document2:
@@ -187,6 +189,11 @@ top_5_productos %>%
 
 ```
 
+
+
+
+
+
 \nolinenumbers
 
 **Pregunta 2: Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos?**
@@ -220,6 +227,11 @@ top5_frutas_verduras %>%
 
 ```
 
+
+
+
+
+
 \nolinenumbers
 
 **Pregunta 3 : Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos ? ¿Cuántos kilos se han vendido de cada uno de estos productos?**
@@ -245,6 +257,8 @@ df_p %>% filter(Tipo == "Pescado") %>%
 En la tabla \@ref(tab:tabla-pesven) se puede observar los 5 tipos de pescado más vendidos junto a la cantidad en kg de cada uno. Se puede apreciar facilmente que la cantidad vendida de cada uno es muy similar.
 
 Esta tabla tambien nos muestra que apesar de que la dorada dentro de los 5 peces más vendidod es el que menos se consume, lo compensa en kg comprados, la cual cosa puede explicar porque se vende menos.
+
+\newpage
 
 \nolinenumbers
 
@@ -273,6 +287,8 @@ Se puede observar en las gráficas que el precio del platano es mucho más varia
 
 También hay que considerar que tenemos el doble de observaciones de platano por lo que puede ser que no sea tan precisa la representación de la banana, donde también se puede ver que hay un outlier el dia 12 de noviembre de 2024.
 
+\newpage
+
 \nolinenumbers
 
 **Pregunta 5 :¿Cuál es la procedencia de los tickets?¿ Qué ciudad/ pueblo tiene un mayor número de tickets ?**
@@ -294,6 +310,9 @@ df_h %>% group_by(Ciudad) %>%
 ```
 
 Como era previsible al ser los tickets de los alumnos, era mucha más probable que estos fueran de Valencia o de alrededores, por lo que hay 120 de Valencia y a continuación Alboraya y Burjassot.
+
+
+\newpage
 
 \nolinenumbers
 
@@ -320,6 +339,8 @@ df_h %>%
 ```
 
 Según el diagrama el día entre semana con menos tickets y por lo tanto ventas, es el jueves. Por lo que lo más inteligente sería cerrar este día, ya que es cuando menos gente va a Mercadona.
+
+\newpage
 
 \linenumbers
 
@@ -362,6 +383,8 @@ hora_mas_frecuente %>%
 
 Como podemos comprobar el fin de semana la hora con más compras (21) es a la 13 a diferencia que los dias laborales que es a las 20 con 48 tickets, esto puede darse, debido a que entre semana tenemos obligaciones y extraescolares que atender y por eso las 20 es más frecuente mientras que los fines de semana aprovechamos las mañanas para poder comprar y tener unas tardes más relajadas.
 
+
+
 \nolinenumbers
 
 **Pregunta 8 : ¿Existe alguna diferencia clara en el perfil de compra entre los días de semana y los fines de semana?**
@@ -401,6 +424,8 @@ rbind(top5_laboral,top5_fin_de_semana ) %>%
 ```
 
 Durante los fines de semana, los productos más comprados tienden a ser snacks, frutos secos y frutas como el pepino, kiwi verde y el zumo de naranja.En cambio, los días laborales, los productos más vendidos son elementos básicos como plátanos, queso en lonchas o carne, la gran compra de bolsas nos indica que entre semana se realizan compras más grande, por eso, su gran cantidad de venta, mientras que los fines de semana es una compra más oriendata al consumo inmediato o pequeños caprichos.
+
+\newpage
 
 \nolinenumbers
 
@@ -856,6 +881,16 @@ En el gráfico \@ref(fig:figura-tiempcomp) se puede ver como se distribuyen los 
 
 
 \newpage
+
+\nolinenumbers
+
+# Outlier
+
+\linenumbers
+
+Un outlier (o valor atípico) es un dato que se aleja significativamente del resto de los valores en un conjunto de datos. No parece consiciente con el resto de los datos. Pueden ser datos con gran variabilidad en la media, errores experimentales, errores en la introducción de datos, fallos en el sistema de adquisición, cambios en las unidades...
+La presencia de estos valores atípicos puede producir una influencia en la media o la desviación típica.
+
 
 \nolinenumbers
 
