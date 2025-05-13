@@ -3,11 +3,11 @@ title: "Importacion"
 author: "Morales Martorell, Josep Vicent, Rocio Bono Moreno, Laura Horjales Rivas, Arnau Hernández Lucas y Pau García Pérez."
 date: "2025-04-03"
 output:
-  bookdown::pdf_document2:
+  bookdown::html_document2:
     fig_caption: yes
     df_print: kable
     keep_tex: true
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     fig_caption: yes
     df_print: kable
     keep_tex: true
@@ -37,6 +37,8 @@ options(OutDec = ",", digits = 2)
 ```
 
 **Mini Proyecto de Análisis Exploratorio de Datos:**
+
+**Grupo:** L
 
 **Participantes:** Josep Vicent Morales Martorell, Rocio Bono Moreno, Laura Horjales Rivas, Arnau Hernández Lucas y Pau García Pérez.
 
