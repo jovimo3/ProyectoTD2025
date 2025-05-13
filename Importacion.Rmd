@@ -403,7 +403,7 @@ Guardamos todos los data frames en carpeta data
 ```{r}
 save(df_p, file = "data/1_df_precios.RData")
 save(df_iva, file = "data/1_df_iva.RData")
-save(df_p, file = "data/1_df_general.RData")
+save(df_h, file = "data/1_df_general.RData")
 ```
 
 
