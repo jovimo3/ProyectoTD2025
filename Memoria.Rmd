@@ -91,8 +91,6 @@ texto
 load("data/1_df_general.RData")
 load("data/1_df_iva.RData")
 load("data/1_df_precios.RData")
-
-
 ```
 
 \nolinenumbers
@@ -215,9 +213,19 @@ df_p %>% filter(Tipo == "Pescado") %>%
          group_by(Descripcion) %>% 
          summarise(Peso_Total = sum(Peso), Cantidad = n()) %>% 
          arrange(desc(Cantidad)) %>% 
-         head(3) %>% kable()
+         head(5) #%>% 
+         #kable(caption = "Pescados Más Vendidos \\label{tab:tabla-pesven}", 
+                #booktabs = TRUE,
+                #format = "latex") %>%
+          #kable_styling(
+           #     latex_options = c("striped", "hold_position"),
+            #    position = "center")
 
 ```
+
+En la tabla \@ref(tab:tabla-pesven) se puede observar los 5 tipos de pescado más vendidos junto a la cantidad en kg de cada uno. Se puede apreciar facilmente que la cantidad vendida de cada uno es muy similar.
+
+Esta tabla tambien nos muestra que apesar de que la dorada dentro de los 5 peces más vendidod es el que menos se consume, lo compensa en kg comprados, la cual cosa puede explicar porque se vende menos.
 
 \nolinenumbers
 
@@ -589,41 +597,20 @@ Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que q
 
 \nolinenumbers
 
-**Pregunta 18 : ¿Cuánto supone económicamente de media el IVA en las compras?** \linenumbers
-
-```{r}
-estaciones <- df_h %>% mutate(estacion = ifelse(month(Fecha) >= 3 & month(Fecha) <=5, "primavera", ifelse(month(Fecha)>=6 & month(Fecha)<= 8, "verano", ifelse(month(Fecha)>=9 & month(Fecha)<=11, "otoño", "invierno")))) %>% inner_join(df_p, by = "index")
-
-
-top_5 <- estaciones %>% group_by(estacion, Descripcion) %>% summarise(Frecuencia = n(), .groups = "drop") %>% arrange(desc(Frecuencia)) %>% filter(Descripcion !="BOLSA PLASTICO")
-#invierno
-top_5 %>% filter(estacion == "invierno") %>% head(5)
-#primavera
-top_5 %>% filter(estacion == "primavera") %>% head(5)
-#verano
-top_5 %>% filter(estacion == "verano") %>% head(5)
-#otoño
-top_5 %>% filter(estacion == "otoño") %>% head(5)
-
-
-```
-
-Una de las cosas destacables ya ha sido comentado previamente en una de las preguntas, ya que en invierno y en otoño se puede ver que el platano es el producto más comprado cuando luego en la tabla de verano y primavera no aparece y en su defecto aparece la Banana. Esto es debido a que durante las estaciones de primavera y verano el precio del platano es mucho más superior al estar fuera de temporada. Igualmente con otras frutas que salen en el top únicamente en una estación o en dos, podríamos atribuir este hecho a que cada fruta tiene una temporada.
-
-\nolinenumbers
-
-**Pregunta 17 : ¿Hay relación con precio medio de los productos y la cantidad de productos de la compra?**
-
+**Pregunta 18 : ¿Cuánto supone económicamente de media el IVA en las compras?** 
 \linenumbers
 
 ```{r}
-cantidad_productos <- estaciones %>% group_by(index) %>% summarise(cantidad_total = n())
-cor(df_h$TOTAL_PAGO, df_h$TOTAL_PAGO/cantidad_productos$cantidad_total, method = "spearman",use = "complete.obs")
+(sum(df_iva$CUOTA)/df_iva[length(df_iva$index),1] * 100) %>% trunc()/100
+
 ```
 
-Nos sale una correlación de 0.4 (si utilizamos el metodo de spearman), lo que quiere decir que si que hay una pequeña relación. Una teoria posible puede ser que cuando más grande es la compra compramos productos más caros como carnes o pescados ya que suele ser la "compra de la semana", en cambio si son compras más pequeñas la media de los productos es más baja ya que suelen ser snaks o productos más baratos para el consumo en corto plazo.
+En cada tiquet tenemos que dependiendo del producto se aplica un tipo de iva u otro, si sumamos la cantidad de dinero que esto representan para cada tiquet, podemos saber cual es la media.
+
+Al realizar el calculo, podemos ver que da una medía de 3'37€ en IVA por tiquet.
 
 \nolinenumbers
+
 
 **Pregunta 19 :¿Como ha variado el precio del aceite, y relacionados, a lo largo del tiempo?**
 
@@ -665,15 +652,16 @@ df_p %>% filter(Tipo != "") %>%
           group_by(Tipo) %>% 
           summarise(Gastado = sum(Importe, na.rm = T), Compras = n()) %>%
           kable(caption = "Venta Pescado Fruta y Verdura \\label{tab:tabla-gastopov}", 
-
-          booktabs = TRUE,
-          format = "latex") %>%
-kable_styling(
-    latex_options = c("striped", "hold_position"),
-    position = "center"
-
-  )
+                booktabs = TRUE,
+                format = "latex") %>%
+          kable_styling(
+                latex_options = c("striped", "hold_position"),
+                position = "center")
 ```
+
+En la tabla \@ref(tab:tabla-gastopov) podemos ver represenado el gasto en euros total tanto en pescado como en fruta o verduta, a su vez tambien se muestra la cantidad comprada de los mismos.
+
+Se puede ver con claridad que tanto el producto más comprado es la fruta o verdura respecto a los de tipo pescado, con esto se observa debido a la gran diferencia de compra que en la fruta y verdura se ha gastado más.
 
 \nolinenumbers
 
